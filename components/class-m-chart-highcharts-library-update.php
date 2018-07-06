@@ -52,12 +52,10 @@ class M_Chart_Highcharts_Library_Update {
 			'plugin' => $this->slug . '/' . $this->slug . '.php',
 			'new_version' => $plugin_data['Version'],
 			'url' => 'https://github.com/' . $this->github_account . '/' . $this->slug,
-			'package' => 'https://github.com/' . $this->github_account . '/' . $this->slug . '/archive/master.zip',
+			'package' => 'https://github.com/' . $this->github_account . '/' . $this->slug . '/raw/master/plugin.zip',
 			'icons' => array(
-				//'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-256x256.png',
-				//'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-128x128.png',
-				'2x' => 'http://localhost/wp-content/plugins/m-chart-highcharts-library/assets/icon-256x256.png',
-				'1x' => 'http://localhost/wp-content/plugins/m-chart-highcharts-library/assets/icon-128x128.png',
+				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-256x256.png',
+				'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-128x128.png',
 			),
 			'banners' => array(
 				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-1544x500.png',
@@ -116,10 +114,8 @@ class M_Chart_Highcharts_Library_Update {
 			'sections'       => $readme_data['sections'],
 			'tags'           => $tags,
 			'banners' => array(
-				//'high' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-1544x500.png',
-				//'low' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-772x250.png',
-				'high' => 'http://localhost/wp-content/plugins/m-chart-highcharts-library/assets/banner-1544x500.png',
-				'low' => 'http://localhost/wp-content/plugins/m-chart-highcharts-library/assets/banner-772x250.png',
+				'high' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-1544x500.png',
+				'low' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-772x250.png',
 			),
 	    );
 
