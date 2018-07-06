@@ -1,0 +1,82 @@
+// Chart/Settings Styles
+
+#m-chart {
+	.inside {
+		.settings {
+			.row {
+				&.one {
+					p {
+						float: left;
+						margin-left: 1%;
+						width: 32%;
+
+						&:first-child {
+							margin-left: 0;
+						}
+					}
+				}
+
+				&.two {
+					p {
+						float: left;
+						margin-left: 1%;
+						width: 32%;
+
+						&:first-child {
+							margin-left: 0;
+						}
+
+						&.shared {
+							display: none;
+						}
+					}
+
+					&.show-shared {
+						p {
+							width: 24%;
+
+							&.shared {
+								display: block;
+							}
+						}
+					}
+				}
+
+				&.three,
+				&.five {
+					p {
+						float: left;
+						width: 73%;
+
+						&.units {
+							float: right;
+							width: 25%;
+						}
+					}
+				}
+
+				&.four {
+					p {
+						margin: 0;
+
+						label {
+							display: inline-block;
+							height: 23px;
+						}
+					}
+				}
+
+				&.six {
+					p {
+						float: right;
+						width: 49%;
+
+						&:first-child {
+							float: left;
+						}
+					}
+				}
+			}
+		}
+	}
+}
