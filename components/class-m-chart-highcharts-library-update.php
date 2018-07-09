@@ -78,7 +78,7 @@ class M_Chart_Highcharts_Library_Update {
 	 * @param string the action being requested from the plugins_api (query_plugins, plugin_information, hot_tags or hot_categories)
 	 * @param array an array arguments about the request
 	 *
-	 * @return array an array of plugins that have pending updates
+	 * @return object an object of the updated plugin information (version, requirements, etc...)
 	 */
 	public function plugins_api( $result, $action = null, $args = null ) {
 		// We only need to override the plugin_information action
