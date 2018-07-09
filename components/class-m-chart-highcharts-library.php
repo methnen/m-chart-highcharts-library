@@ -24,6 +24,7 @@ class M_Chart_Highcharts_Library {
 		add_filter( 'm_chart_image_support', array( $this, 'm_chart_image_support'), 10, 2 );
 		add_filter( 'm_chart_instant_preview_support', array( $this, 'm_chart_instant_preview_support'), 10, 2 );
 		add_filter( 'm_chart_library_class', array( $this, 'm_chart_library_class'), 10, 2 );
+		add_filter( 'm_chart_iframe_scripts', array( $this, 'm_chart_iframe_scripts' ), 10, 2 );
 	}
 
 	/**
@@ -184,13 +185,39 @@ class M_Chart_Highcharts_Library {
 		}
 
 		// Make sure we haven't already gotten the library class
-		if ( ! is_a( $this->library_class, 'M_Chart_Highcharts' ) ) {
+		if ( ! $this->library_class instanceof M_Chart_Highcharts ) {
 			require_once __DIR__ . '/class-m-chart-highcharts.php';
 			$this->library_class = new M_Chart_Highcharts;
 		}
 
 		// Return the library class
 		return $this->library_class;
+	}
+
+	/**
+	 * Hook to the m_chart_iframe_scripts filter and add highcharts-more if needed
+	 *
+	 * @param array $scripts an array of scripts needed for the iframe to render the chart
+	 * @param int $post_id WP post ID of the chart being displayed
+	 *
+	 * @return array $scripts an array of scripts needed for the iframe to render the chart
+	 */
+	public function m_chart_iframe_scripts( $scripts, $post_id ) {
+		$library = $this->get_post_meta( $post->ID, 'library' );
+
+		// If Highcharts isn't the library type we'll stop here
+		if ( $library != $this->library ) {
+			return $scripts;
+		}
+
+		$type = $this->get_post_meta( $post->ID, 'type' );
+
+		if ( 'bubble' == $type ) {
+			$scripts[] = 'highcharts-more';
+		}
+
+		// Return the scripts
+		return $scripts;
 	}
 
 	/**
@@ -222,7 +249,7 @@ class M_Chart_Highcharts_Library {
 function m_chart_highcharts_library() {
 	global $m_chart_highcharts_library;
 
-	if ( ! is_a( $m_chart_highcharts_library, 'M_Chart_Highcharts_Library' ) ) {
+	if ( ! $m_chart_highcharts_library instanceof M_Chart_Highcharts_Library ) {
 		$m_chart_highcharts_library = new M_Chart_Highcharts_Library;
 	}
 

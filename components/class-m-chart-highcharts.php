@@ -325,7 +325,7 @@ class M_Chart_Highcharts {
 			$chart_args['tooltip'] = array(
 				'pointFormat' => '<b>{point.y}</b>',
 			);
-		} else if ( 'scatter' == $this->post_meta['type'] ) {
+		} elseif ( 'scatter' == $this->post_meta['type'] ) {
 			$set_names = $this->post_meta['set_names'];
 
 			foreach ( $this->post_meta['data']['sets'] as $key => $data ) {
@@ -380,7 +380,7 @@ class M_Chart_Highcharts {
 					$chart_args['tooltip']['headerFormat'] =  "<span style='font-size: 10px;'>{series.name}</span><br/>";
 				}
 			}
-		} else if ( 'bubble' == $this->post_meta['type'] ) {
+		} elseif ( 'bubble' == $this->post_meta['type'] ) {
 			$set_names = $this->post_meta['set_names'];
 
 			foreach ( $this->post_meta['data']['sets'] as $key => $data ) {
