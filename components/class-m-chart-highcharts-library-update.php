@@ -43,7 +43,7 @@ class M_Chart_Highcharts_Library_Update {
 			return $transient;
 		}
 
-		// Some stuff we need is in the readme.txt file
+		// Some stuff we need is in the README.md file
 		$readme_data = $this->get_readme_data();
 
 		$transient->response[ $this->slug . '/' . $this->slug . '.php' ] = (object) array(
