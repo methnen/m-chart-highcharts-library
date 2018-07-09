@@ -203,14 +203,14 @@ class M_Chart_Highcharts_Library {
 	 * @return array $scripts an array of scripts needed for the iframe to render the chart
 	 */
 	public function m_chart_iframe_scripts( $scripts, $post_id ) {
-		$library = $this->get_post_meta( $post->ID, 'library' );
+		$library = m_chart()->get_post_meta( $post->ID, 'library' );
 
 		// If Highcharts isn't the library type we'll stop here
 		if ( $library != $this->library ) {
 			return $scripts;
 		}
 
-		$type = $this->get_post_meta( $post->ID, 'type' );
+		$type = m_chart()->get_post_meta( $post->ID, 'type' );
 
 		if ( 'bubble' == $type ) {
 			$scripts[] = 'highcharts-more';
