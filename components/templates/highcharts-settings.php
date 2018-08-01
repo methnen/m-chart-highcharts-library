@@ -38,8 +38,8 @@ if ( true == $post_meta['y_min'] ) {
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'theme' ); ?>"><?php esc_html_e( 'Theme', 'm-chart' ); ?></label><br />
-			<select name="<?php echo $this->get_field_name( 'theme' ); ?>" id="<?php echo $this->get_field_id( 'theme' ); ?>">
+			<label for="<?php echo esc_attr( $this->get_field_id( 'theme' ) ); ?>"><?php esc_html_e( 'Theme', 'm-chart' ); ?></label><br />
+			<select name="<?php echo esc_attr( $this->get_field_name( 'theme' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'theme' ) ); ?>">
 				<?php
 				foreach ( m_chart()->library( 'highcharts' )->get_themes() as $theme ) {
 					?>
