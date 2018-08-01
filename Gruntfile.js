@@ -28,9 +28,63 @@ module.exports = function( grunt ) {
 		scsslint: {
 			allFiles: [ 'components/sass/*.scss' ]
 		},
+		compress: {
+			main: {
+			    options: {
+			      archive: 'plugin.zip'
+			    },
+				files: [
+					{
+						src: 'LICENSE.md',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'README.md',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'readme.txt',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'm-chart-highcharts-library.php',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/*',
+						dest: 'm-chart-highcharts-library/',
+						filter: 'isFile'
+					},
+					{
+						src: 'components/css/**',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/external/**',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/css/*',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/highcharts-themes/*',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/js/*',
+						dest: 'm-chart-highcharts-library/'
+					},
+					{
+						src: 'components/templates/*',
+						dest: 'm-chart-highcharts-library/'
+					}
+				]
+			}
+		}
 	});
 
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
 
-	grunt.registerTask( 'default', [ 'compass:prod', 'wp_readme_to_markdown', 'scsslint' ] );
+	grunt.registerTask( 'default', [ 'compass:prod', 'wp_readme_to_markdown', 'scsslint', 'compress' ] );
 };
