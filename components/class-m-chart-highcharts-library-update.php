@@ -39,7 +39,7 @@ class M_Chart_Highcharts_Library_Update {
 		$plugin_data = $this->get_plugin_data();
 
 		// Is the version on GitHub newer?
-		if ( version_compare( $plugin_data['Version'], m_chart_highcharts_library()->version, 'gt' ) ) {
+		if ( ! version_compare( $plugin_data['Version'], m_chart_highcharts_library()->version, 'gt' ) ) {
 			return $transient;
 		}
 
