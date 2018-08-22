@@ -3,7 +3,7 @@
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
 **Tested up to:** 4.9.6  
-**Stable tag:** 1.0  
+**Stable tag:** 1.1  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -30,6 +30,10 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 	- WordPress Admin -> Charts -> Settings
 
 ## Changelog ##
+
+### 1.1 ###
+
+* Fixed an issue where the image generated for a chart was zoomed in on the top left fourth of the chart
 
 ### 1.0 ###
 
