@@ -78,12 +78,6 @@ var m_chart_highcharts_admin = {};
 	    svg = svg.replace( 'width="' + width + '"', 'width="' + ( width * 2 ) + '"' );
 	    svg = svg.replace( 'height="' + height + '"', 'height="' + ( height * 2 ) + '"' );
 
-		// Scaling continues to be a disaster in canvg so we'll scale manually here
-		svg = svg.replace(
-			'<svg ',
-		    '<svg transform="scale(2)" '
-		);
-
 		// Create a Canvas object out of the SVG
 		var $canvas = $( '#m-chart-canvas-render-' + event.post_id );
 		m_chart_admin.canvas = $canvas.get( 0 );
