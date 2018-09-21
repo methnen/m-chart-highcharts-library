@@ -318,7 +318,7 @@ class M_Chart_Highcharts_Library_Update {
 		}
 
 		// If the new version isn't one of the 1.0.x releases we can stop right here
-		if ( 0 != strncmp('1.0.', $new_version, 4 ) ) {
+		if ( 0 != strncmp( '1.0.', $new_version, 4 ) ) {
 			return false;
 		}
 
