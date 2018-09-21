@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.1';
+	public $version = '1.0.2';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
@@ -16,6 +16,7 @@ class M_Chart_Highcharts_Library {
 		$this->plugin_url = $this->plugin_url();
 
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 
 		add_filter( 'm_chart_get_libraries', array( $this, 'm_chart_get_libraries' ) );
@@ -33,13 +34,6 @@ class M_Chart_Highcharts_Library {
 	public function init() {
 		// Register the graphing library scripts
 		wp_register_script(
-			'highcharts-more',
-			$this->plugin_url . '/components/external/highcharts/highcharts-more.js',
-			array( 'jquery', 'highcharts' ),
-			$this->version
-		);
-
-		wp_register_script(
 			'highcharts',
 			$this->plugin_url . '/components/external/highcharts/highcharts.js',
 			array( 'jquery' ),
@@ -47,9 +41,30 @@ class M_Chart_Highcharts_Library {
 		);
 
 		wp_register_script(
+			'highcharts-more',
+			$this->plugin_url . '/components/external/highcharts/highcharts-more.js',
+			array( 'jquery', 'highcharts' ),
+			$this->version
+		);
+
+		wp_register_script(
 			'highcharts-exporting',
 			$this->plugin_url . '/components/external/highcharts/exporting.js',
 			array( 'highcharts', 'jquery' ),
+			$this->version
+		);
+
+		wp_register_script(
+			'highcharts-offline-exporting',
+			$this->plugin_url . '/components/external/highcharts/offline-exporting.js',
+			array( 'highcharts', 'jquery', 'highcharts-exporting' ),
+			$this->version
+		);
+
+		wp_register_script(
+			'highcharts-export-data',
+			$this->plugin_url . '/components/external/highcharts/export-data.js',
+			array( 'highcharts', 'jquery', 'highcharts-exporting', 'highcharts-offline-exporting' ),
 			$this->version
 		);
 
@@ -63,11 +78,22 @@ class M_Chart_Highcharts_Library {
 	}
 
 	/**
+	 * Do some stuff in the admin panel
+	 */
+	public function admin_init() {
+		add_action( 'admin_notices', array( $this, 'library_warning' ) );
+	}
+
+	/**
 	 * Load CSS/Javascript necessary for the interface
 	 *
 	 * @param object the current screen object as passed by the current_screen action hook
 	 */
 	public function current_screen( $screen ) {
+		if ( ! is_plugin_active( 'm-chart/m-chart.php' ) ) {
+			return;
+		}
+
 		if ( m_chart()->slug != $screen->post_type ) {
 			return;
 		}
@@ -218,6 +244,38 @@ class M_Chart_Highcharts_Library {
 
 		// Return the scripts
 		return $scripts;
+	}
+
+	/**
+	 * Display an admin notice when the site doesn't have the necessary parent plugin active
+	 */
+	public function library_warning() {
+		if ( is_plugin_active( 'm-chart/m-chart.php' ) ) {
+			return;
+		}
+		?>
+		<div class="warning notice notice-warning">
+			<p>
+				<?php
+				echo str_replace(
+					esc_html__( 'M Chart Highcharts Library', 'm-chart' ),
+					'<strong>' . esc_html__( 'M Chart Highcharts Library', 'm-chart' ) . '</strong>',
+					esc_html__( 'M Chart Highcharts Library requires another plugin in order to function.', 'm-chart' )
+				);
+				?>
+			</p>
+			<p>
+				<?php
+					echo str_replace(
+					esc_html__( 'M Chart', 'm-chart' ),
+					'<strong>' . esc_html__( 'M Chart', 'm-chart' ) . '</strong>',
+					esc_html__( 'To use this plugin please install M Chart:', 'm-chart' )
+				);
+				?>
+			</p>
+			<p><a href="https://wordpress.org/plugins/m-chart/" class="button-primary"><?php esc_html_e( 'Learn More', 'm-chart' ); ?></a></p>
+		</div>
+		<?php
 	}
 
 	/**
