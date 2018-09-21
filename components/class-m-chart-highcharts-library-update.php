@@ -312,8 +312,8 @@ class M_Chart_Highcharts_Library_Update {
 	 * @return bool true if there should be an update false if there shouldn't
 	 */
 	public function bad_version_check( $new_version, $current_version ) {
-		// If the current version isn't 1.1 we can stop right here
-		if ( '1.1' != $current_version ) {
+		// If the current version isn't 1.2 we can stop right here
+		if ( '1.2' != $current_version ) {
 			return false;
 		}
 
