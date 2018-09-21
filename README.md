@@ -3,7 +3,7 @@
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
 **Tested up to:** 4.9.8  
-**Stable tag:** 1.1  
+**Stable tag:** 1.0.2  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -31,7 +31,16 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ## Changelog ##
 
-### 1.1 ###
+### 1.0.2 ###
+
+* Added code to deal with someone installing/activating M Chart Highcharts Library before M Chart
+* Added export-data.js and offline-exporting.js to the list of scripts that are registered by the plugin
+	* referenced as 'highcharts-offline-exporting' and 'highcharts-export-data' respectively
+* Updated Highcharts to the latest stable version (6.1.3)
+* Rejiggered the version numbers
+	* I shouldn't have made the previous version 1.1 which implies more than bug fixes and small changes
+
+### 1.0.1 ###
 
 * Fixed an issue where the image generated for a chart was zoomed in on the top left fourth of the chart
 

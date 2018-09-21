@@ -39,7 +39,10 @@ class M_Chart_Highcharts_Library_Update {
 		$plugin_data = $this->get_plugin_data();
 
 		// Is the version on GitHub newer?
-		if ( ! version_compare( $plugin_data['Version'], m_chart_highcharts_library()->version, 'gt' ) ) {
+		if (
+			   ! version_compare( $plugin_data['Version'], m_chart_highcharts_library()->version, 'gt' )
+			&& ! $this->bad_version_check( $plugin_data['Version'], m_chart_highcharts_library()->version )
+		) {
 			return $transient;
 		}
 
@@ -298,5 +301,28 @@ class M_Chart_Highcharts_Library_Update {
 		}
 
 		return $section;
+	}
+
+	/**
+	 * Deal with the fact that I stupidly gave the first bug fix a version number of 1.1 instead of 1.0.1
+	 *
+	 * @param string the new version
+	 * @param string the current version
+	 *
+	 * @return bool true if there should be an update false if there shouldn't
+	 */
+	public function bad_version_check( $new_version, $current_version ) {
+		// If the current version isn't 1.1 we can stop right here
+		if ( '1.1' != $current_version ) {
+			return false;
+		}
+
+		// If the new version isn't one of the 1.0.x releases we can stop right here
+		if ( 0 != strncmp('1.0.', $new_version, 4 ) ) {
+			return false;
+		}
+
+		// Looks like we're updating from the badly numbered 1.1 relase to one of the 1.0.x releases
+		return true;
 	}
 }
