@@ -304,25 +304,25 @@ class M_Chart_Highcharts_Library_Update {
 	}
 
 	/**
- 	 * Deal with the fact that I stupidly gave the first bug fix a version number of 1.1 instead of 1.0.1
- 	 *
- 	 * @param string the new version
- 	 * @param string the current version
- 	 *
- 	 * @return bool true if there should be an update false if there shouldn't
- 	 */
- 	public function bad_version_check( $new_version, $current_version ) {
- 		// If the current version isn't 1.2 we can stop right here
- 		if ( '1.2' != $current_version ) {
- 			return false;
- 		}
+	 * Deal with the fact that I stupidly gave the first bug fix a version number of 1.1 instead of 1.0.1
+	 *
+	 * @param string the new version
+	 * @param string the current version
+	 *
+	 * @return bool true if there should be an update false if there shouldn't
+	 */
+	public function bad_version_check( $new_version, $current_version ) {
+		// If the current version isn't 1.2 we can stop right here
+		if ( '1.2' != $current_version ) {
+			return false;
+		}
 
- 		// If the new version isn't one of the 1.0.x releases we can stop right here
- 		if ( 0 != strncmp('1.0.', $new_version, 4 ) ) {
- 			return false;
- 		}
+		// If the new version isn't one of the 1.0.x releases we can stop right here
+		if ( 0 != strncmp( '1.0.', $new_version, 4 ) ) {
+			return false;
+		}
 
- 		// Looks like we're updating from the badly numbered 1.1 relase to one of the 1.0.x releases
- 		return true;
- 	}
+		// Looks like we're updating from the badly numbered 1.1 relase to one of the 1.0.x releases
+		return true;
+	}
 }
