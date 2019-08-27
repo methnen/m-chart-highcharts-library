@@ -113,7 +113,7 @@ class M_Chart_Highcharts_Library_Update {
 			'requires'       => $readme_data['requires'],
 			'tested'         => $readme_data['tested'],
 			'requires_php'   => $readme_data['requires_php'],
-			'homepage'       => $plugin_daa['PluginURI'],
+			'homepage'       => $plugin_data['PluginURI'],
 			'sections'       => $readme_data['sections'],
 			'tags'           => $tags,
 			'banners' => array(
