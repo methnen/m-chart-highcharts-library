@@ -33,7 +33,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ### 1.0.5 ###
 
-* Fixed an issue where the necessary Highcharts libraries didn't load for bubble charts when editing a chart
+* Fixed an issue where the necessary Highcharts libraries sometimes didn't load when editing a bubble chart
 
 ### 1.0.4 ###
 
