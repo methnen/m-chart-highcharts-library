@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.0.4';
+	public $version = '1.0.5';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
