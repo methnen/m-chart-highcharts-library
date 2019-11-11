@@ -42,7 +42,8 @@ class M_Chart_Highcharts {
 		$this->post = get_post( $post_id );
 		$this->post_meta = m_chart()->get_post_meta( $this->post->ID );
 
-		if ( 'bubble' == $this->post_meta['type'] ) {
+		// If editing charts we should always load all of the highcharts libraries
+		if ( is_admin() || 'bubble' == $this->post_meta['type'] ) {
 			wp_enqueue_script( 'highcharts-more' );
 		}
 	}
