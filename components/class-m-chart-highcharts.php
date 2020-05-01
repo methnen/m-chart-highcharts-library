@@ -17,6 +17,9 @@ class M_Chart_Highcharts {
 		'pie',
 		'scatter',
 		'bubble',
+		'radar',
+		'radar-area',
+		'polar',
 	);
 	public $theme_directories;
 
@@ -125,6 +128,19 @@ class M_Chart_Highcharts {
 				),
 			),
 		);
+
+		if ( 'radar' == $this->post_meta['type'] ) {
+			$chart_args['chart']['polar'] = true;
+			$chart_args['chart']['type'] = 'line';
+			$chart_args['yAxis']['gridLineInterpolation'] = 'polygon';
+		} elseif ( 'radar-area' == $this->post_meta['type'] ) {
+			$chart_args['chart']['polar'] = true;
+			$chart_args['chart']['type'] = 'area';
+			$chart_args['yAxis']['gridLineInterpolation'] = 'polygon';
+		} elseif ( 'polar' == $this->post_meta['type'] ) {
+			$chart_args['chart']['polar'] = true;
+			$chart_args['chart']['type'] = 'column';
+		}
 
 		// We don't want to set a width unless an explicit width was given
 		if ( is_numeric( $this->args['width'] ) ) {

@@ -52,7 +52,10 @@ var m_chart_highcharts_admin = {};
 			$spreadsheet_tabs.addClass( 'hide' );
 		}
 
-		if ( 'pie' === chart_type ) {
+		if (
+			   'pie' === chart_type
+			|| 'polar' === chart_type
+		) {
 			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
 			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.addClass( 'hide' );
@@ -64,6 +67,15 @@ var m_chart_highcharts_admin = {};
 		) {
 			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
 			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
+			$spreadsheet_tabs.removeClass( 'hide' );
+		}
+		
+		if (
+			   'radar' === chart_type
+			|| 'radar-area' === chart_type
+		) {
+			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
+			chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.removeClass( 'hide' );
 		}
 	};

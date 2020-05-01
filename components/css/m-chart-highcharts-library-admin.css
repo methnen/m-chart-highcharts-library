@@ -42,7 +42,7 @@
 }
 /* line 59, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.four p {
-  margin: 0;
+  margin-top: 5px;
 }
 /* line 62, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.four p label {

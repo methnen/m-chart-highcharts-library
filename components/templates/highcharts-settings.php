@@ -8,6 +8,9 @@ $type_option_names = array(
 	'pie'     => esc_html__( 'Pie', 'm-chart' ),
 	'scatter' => esc_html__( 'Scatter', 'm-chart' ),
 	'bubble'  => esc_html__( 'Bubble', 'm-chart' ),
+	'radar'      => esc_html__( 'Radar', 'm-chart' ),
+	'radar-area' => esc_html__( 'Radar Area', 'm-chart' ),
+	'polar'      => esc_html__( 'Polar', 'm-chart' ),
 );
 
 $parse_option_names = array(
@@ -128,7 +131,7 @@ if ( true == $post_meta['y_min'] ) {
 				<input type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'y_min' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'y-min' ) ); ?>" value="1"<?php checked( $post_meta['y_min'], true ); ?>/>
 				<?php esc_html_e( 'Force vertical axis minimum: ', 'm-chart' ) ?>
 			</label>
-			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'y_min_value' ) ); ?>" value="<?php echo floatval( $post_meta['y_min_value'] ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'y-min-value' ) ); ?>"<?php echo $disabled; ?> />
+			<input type="text" name="<?php echo esc_attr( $this->get_field_name( 'y_min_value' ) ); ?>" value="<?php echo floatval( $post_meta['y_min_value'] ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'y-min-value' ) ); ?>" size="7"<?php echo $disabled; ?> />
 		</p>
 	</div>
 	<div class="row five horizontal-axis">
