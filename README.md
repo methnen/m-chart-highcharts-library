@@ -31,6 +31,10 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ## Changelog ##
 
+### 1.0.6 ###
+
+* Fixed some issues with the admin Javascript when the plugin is used in WordPress 5.5
+
 ### 1.0.5 ###
 
 * Fixed an issue where the necessary Highcharts libraries sometimes didn't load when editing a bubble chart
