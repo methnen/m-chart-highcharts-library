@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: M Chart Highcharts Library
-Version: 1.0.5
+Version: 1.0.6
 Plugin URI: https://github.com/methnen/m-chart-highcharts-library
 Description: Adds the Highcharts library to M Chart.
 Author: Jamie Poitra

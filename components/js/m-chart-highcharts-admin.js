@@ -20,7 +20,7 @@ var m_chart_highcharts_admin = {};
 
 	// Handle chart type input changes so the settings UI only reflects appropriate options
 	m_chart_highcharts_admin.handle_chart_type = function( event ) {
-		var chart_type        = $( this ).attr( 'value' );
+		var chart_type        = $( this ).val();
 		var $chart_meta_box   = $( document.getElementById( 'm-chart' ) );
 		var $spreadsheet_tabs = $( document.getElementById( 'hands-on-table-sheet-tabs' ) );
 
@@ -94,7 +94,7 @@ var m_chart_highcharts_admin = {};
 		var img = m_chart_admin.canvas.toDataURL( 'image/png' );
 
 		// Save the image string to the text area so we can save it on update/publish
-		$( document.getElementById( 'm-chart-img' ) ).attr( 'value', img );
+		$( document.getElementById( 'm-chart-img' ) ).val( img );
 
 		// Allow form submission now that we've got a valid img value set
 		m_chart_admin.form_submission( true );
