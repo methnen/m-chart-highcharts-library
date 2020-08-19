@@ -2,8 +2,8 @@
 Contributors: methnen
 Tags: highcharts, graphs, charts, data, wordpress
 Requires at least: 4.2
-Tested up to: 5.2.2
-Stable tag: 1.0.5
+Tested up to: 5.5
+Stable tag: 1.0.6
 License: MIT
 
 Adds the Highcharts library to M Chart.
