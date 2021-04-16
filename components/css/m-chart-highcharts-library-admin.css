@@ -1,3 +1,9 @@
+/* line 3, ../sass/_misc.scss */
+.column-m-chart-library span.highcharts {
+  background-image: url(../external/highcharts/highcharts-logo.svg);
+  background-size: contain;
+}
+
 /* line 8, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.one p {
   float: left;

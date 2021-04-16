@@ -69,7 +69,7 @@ var m_chart_highcharts_admin = {};
 			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.removeClass( 'hide' );
 		}
-		
+
 		if (
 			   'radar' === chart_type
 			|| 'radar-area' === chart_type
@@ -92,21 +92,21 @@ var m_chart_highcharts_admin = {};
 
 		// Create a Canvas object out of the SVG
 		var $canvas = $( '#m-chart-canvas-render-' + event.post_id );
-		m_chart_admin.canvas = $canvas.get( 0 );
 
-		canvg( m_chart_admin.canvas, svg );
+		m_chart_admin.canvas = $canvas[0].getContext( '2d' );
 
-		// Create Canvas context so we can play with it before saving
-		m_chart_admin.canvas_context = m_chart_admin.canvas.getContext( '2d' );
+		// Convert SVG to the canvas object
+		let v = canvg.Canvg.fromString( m_chart_admin.canvas, svg );
+		v.start();
 
 		$( '.m-chart' ).trigger({
 			type: 'canvas_done'
 		});
 
-		var img = m_chart_admin.canvas.toDataURL( 'image/png' );
+		var img = $canvas[0].toDataURL( 'image/png' );
 
 		// Save the image string to the text area so we can save it on update/publish
-		$( document.getElementById( 'm-chart-img' ) ).attr( 'value', img );
+		$( document.getElementById( 'm-chart-img' ) ).val( img );
 
 		// Allow form submission now that we've got a valid img value set
 		m_chart_admin.form_submission( true );

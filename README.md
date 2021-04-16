@@ -2,8 +2,8 @@
 **Contributors:** [methnen](https://profiles.wordpress.org/methnen)  
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
-**Tested up to:** 5.2.2  
-**Stable tag:** 1.0.5  
+**Tested up to:** 5.7  
+**Stable tag:** 1.1  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -31,6 +31,11 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ## Changelog ##
 
+### 1.1 ###
+
+* Added support for [radar](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar), [radar area](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar-area), and [polar](https://github.com/methnen/m-chart/wiki/Types-of-charts#polar) charts
+* Updated Highcharts to the latest stable version (9.0.1)
+
 ### 1.0.5 ###
 
 * Fixed an issue where the necessary Highcharts libraries sometimes didn't load when editing a bubble chart
@@ -46,7 +51,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 	* referenced as 'highcharts-offline-exporting' and 'highcharts-export-data' respectively
 * Updated Highcharts to the latest stable version (7.0)
 * **Rejiggered the version numbers**
-	* I shouldn't have made the first version 1.1 which implies more than bug fixes and small changes
+	* I shouldn't have made the first iteration 1.1 which implies more than bug fixes and small changes
 
 ### 1.0.2 ###
 

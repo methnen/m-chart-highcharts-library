@@ -1,18 +1,4 @@
 <?php
-$type_option_names = array(
-	'line'    => esc_html__( 'Line', 'm-chart' ),
-	'spline'  => esc_html__( 'Spline', 'm-chart' ),
-	'area'    => esc_html__( 'Area', 'm-chart' ),
-	'column'  => esc_html__( 'Column', 'm-chart' ),
-	'bar'     => esc_html__( 'Bar', 'm-chart' ),
-	'pie'     => esc_html__( 'Pie', 'm-chart' ),
-	'scatter' => esc_html__( 'Scatter', 'm-chart' ),
-	'bubble'  => esc_html__( 'Bubble', 'm-chart' ),
-	'radar'      => esc_html__( 'Radar', 'm-chart' ),
-	'radar-area' => esc_html__( 'Radar Area', 'm-chart' ),
-	'polar'      => esc_html__( 'Polar', 'm-chart' ),
-);
-
 $parse_option_names = array(
 	'columns' => esc_html__( 'Columns', 'm-chart' ),
 	'rows'    => esc_html__( 'Rows', 'm-chart' ),
@@ -33,7 +19,7 @@ if ( true == $post_meta['y_min'] ) {
 				foreach ( m_chart()->library( 'highcharts' )->type_options as $type ) {
 					?>
 					<option value="<?php echo esc_attr( $type ); ?>"<?php selected( $type, $post_meta['type'] ); ?>>
-						<?php echo esc_html( $type_option_names[ $type ] ); ?>
+						<?php echo esc_html( m_chart()->library( 'highcharts' )->type_option_names[ $type ] ); ?>
 					</option>
 					<?php
 				}

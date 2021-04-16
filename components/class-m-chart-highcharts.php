@@ -2,6 +2,7 @@
 
 class M_Chart_Highcharts {
 	public $library = 'highcharts';
+	public $library_name = 'Highcharts';
 	public $value_labels_limit = 15;
 	public $value_labels_div = 10;
 	public $original_labels;
@@ -21,6 +22,21 @@ class M_Chart_Highcharts {
 		'radar-area',
 		'polar',
 	);
+	public $chart_types = array(
+		'line'       => 'line',
+		'spline'     => 'spline',
+		'area'       => 'area',
+		'column'     => 'column',
+		'bar'        => 'bar',
+		'pie'        => 'pie',
+		'scatter'    => 'scatter',
+		'bubble'     => 'bubble',
+		// These three actually get reset later
+		'radar'      => 'polar', 
+		'radar-area' => 'polar',
+		'polar'      => 'polar',
+	);
+	public $type_option_names = array();
 	public $theme_directories;
 
 	/**
@@ -31,6 +47,20 @@ class M_Chart_Highcharts {
 			get_stylesheet_directory() . '/m-chart-highcharts-themes/', // Child theme
 			get_template_directory() . '/m-chart-highcharts-themes/', // Parent theme
 			__DIR__ . '/highcharts-themes/',
+		);
+		
+		$this->type_option_names = array(
+			'line'       => esc_html__( 'Line', 'm-chart' ),
+			'spline'     => esc_html__( 'Spline', 'm-chart' ),
+			'area'       => esc_html__( 'Area', 'm-chart' ),
+			'column'     => esc_html__( 'Column', 'm-chart' ),
+			'bar'        => esc_html__( 'Bar', 'm-chart' ),
+			'pie'        => esc_html__( 'Pie', 'm-chart' ),
+			'scatter'    => esc_html__( 'Scatter', 'm-chart' ),
+			'bubble'     => esc_html__( 'Bubble', 'm-chart' ),
+			'radar'      => esc_html__( 'Radar', 'm-chart' ),
+			'radar-area' => esc_html__( 'Radar Area', 'm-chart' ),
+			'polar'      => esc_html__( 'Polar', 'm-chart' ),
 		);
 	}
 
@@ -46,7 +76,13 @@ class M_Chart_Highcharts {
 		$this->post_meta = m_chart()->get_post_meta( $this->post->ID );
 
 		// If editing charts we should always load all of the highcharts libraries
-		if ( is_admin() || 'bubble' == $this->post_meta['type'] ) {
+		if (
+			   is_admin() 
+			|| 'bubble' == $this->post_meta['type']
+			|| 'radar' == $this->post_meta['type']
+			|| 'radar-area' == $this->post_meta['type']
+			|| 'polar' == $this->post_meta['type']
+		) {
 			wp_enqueue_script( 'highcharts-more' );
 		}
 	}
@@ -93,7 +129,7 @@ class M_Chart_Highcharts {
 
 		$chart_args = array(
 			'chart' => array(
-				'type'        => $this->post_meta['type'],
+				'type'        => $this->chart_types[ $this->post_meta['type'] ],
 				'show_labels' => $this->post_meta['labels'] ? true : false,
 				'renderTo'    => 'm-chart-' . $this->post->ID,
 				'height'      => $this->post_meta['height'],
@@ -129,14 +165,19 @@ class M_Chart_Highcharts {
 			),
 		);
 
+		// Radar and Polar charts in Highcharts are handle a bit strangely
 		if ( 'radar' == $this->post_meta['type'] ) {
 			$chart_args['chart']['polar'] = true;
 			$chart_args['chart']['type'] = 'line';
 			$chart_args['yAxis']['gridLineInterpolation'] = 'polygon';
+			$chart_args['xAxis']['tickmarkPlacement'] = 'on';
+			$chart_args['xAxis']['lineWidth'] = 0;
 		} elseif ( 'radar-area' == $this->post_meta['type'] ) {
 			$chart_args['chart']['polar'] = true;
 			$chart_args['chart']['type'] = 'area';
 			$chart_args['yAxis']['gridLineInterpolation'] = 'polygon';
+			$chart_args['xAxis']['tickmarkPlacement'] = 'on';
+			$chart_args['xAxis']['lineWidth'] = 0;
 		} elseif ( 'polar' == $this->post_meta['type'] ) {
 			$chart_args['chart']['polar'] = true;
 			$chart_args['chart']['type'] = 'column';
@@ -338,6 +379,14 @@ class M_Chart_Highcharts {
 					'data'         => $new_data_array,
 				),
 			);
+
+			if ( 
+				   'radar' == $this->post_meta['type']
+				|| 'radar-area' == $this->post_meta['type']
+				|| 'polar' == $this->post_meta['type']
+			) {
+				unset( $chart_args['series'][0]['type'] );
+			}
 
 			$chart_args['tooltip'] = array(
 				'pointFormat' => '<b>{point.y}</b>',
