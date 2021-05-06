@@ -35,8 +35,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 * Added support for [radar](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar), [radar area](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar-area), and [polar](https://github.com/methnen/m-chart/wiki/Types-of-charts#polar) charts
 * Added support for the Image Multiplier setting
-* Fixed some issues with the auto image generation and updated code to use canvg 3.0.7
+* Updated image generation code to use canvg 3.0.7
 * Updated Highcharts to the latest stable version (9.1.0)
+
+### 1.0.6 ###
+
+* Fixed some issues with the admin Javascript when the plugin is used in WordPress 5.5
 
 ### 1.0.5 ###
 
