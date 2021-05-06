@@ -32,7 +32,7 @@ class M_Chart_Highcharts {
 		'scatter'    => 'scatter',
 		'bubble'     => 'bubble',
 		// These three actually get reset later
-		'radar'      => 'polar', 
+		'radar'      => 'polar',
 		'radar-area' => 'polar',
 		'polar'      => 'polar',
 	);
@@ -48,7 +48,7 @@ class M_Chart_Highcharts {
 			get_template_directory() . '/m-chart-highcharts-themes/', // Parent theme
 			__DIR__ . '/highcharts-themes/',
 		);
-		
+
 		$this->type_option_names = array(
 			'line'       => esc_html__( 'Line', 'm-chart' ),
 			'spline'     => esc_html__( 'Spline', 'm-chart' ),
@@ -77,7 +77,7 @@ class M_Chart_Highcharts {
 
 		// If editing charts we should always load all of the highcharts libraries
 		if (
-			   is_admin() 
+			   is_admin()
 			|| 'bubble' == $this->post_meta['type']
 			|| 'radar' == $this->post_meta['type']
 			|| 'radar-area' == $this->post_meta['type']
@@ -194,6 +194,7 @@ class M_Chart_Highcharts {
 			&& (
 				   'line' == $this->post_meta['type']
 				|| 'spline' == $this->post_meta['type']
+   				|| 'area' == $this->post_meta['type']
 			)
 		) {
 			$chart_args['yAxis']['min'] = $this->post_meta['y_min_value'];
@@ -205,9 +206,9 @@ class M_Chart_Highcharts {
 		} else {
 			// Bubble charts need a little massaging to look better by default
 			$chart_args['yAxis']['startOnTick'] = false;
-			$chart_args['yAxis']['endOnTick'] = false;
+			$chart_args['yAxis']['endOnTick']   = false;
 			$chart_args['xAxis']['startOnTick'] = false;
-			$chart_args['xAxis']['endOnTick'] = false;
+			$chart_args['xAxis']['endOnTick']   = false;
 		}
 
 		$chart_args = $this->add_axis_labels( $chart_args );
@@ -321,7 +322,7 @@ class M_Chart_Highcharts {
 		$chart_args['yAxis']['title']['text'] = $this->esc_title( $this->post_meta['y_title'] );
 
 		// We've got y axis units so we'll add them to the axis label
-		if ( $this->post_meta['y_units'] != '' ) {
+		if ( '' != $this->post_meta['y_units'] ) {
 			$units   = get_term_by( 'slug', $this->post_meta['y_units'], m_chart()->slug . '-units' );
 			$y_units = '' != $this->post_meta['y_title'] ? ' (' . $units->name . ')' : $units->name;
 
@@ -356,6 +357,8 @@ class M_Chart_Highcharts {
 			&& (
 				   'scatter' != $this->post_meta['type']
 				&& 'bubble' != $this->post_meta['type']
+   				&& 'radar' != $this->post_meta['type']
+   				&& 'radar-area' != $this->post_meta['type']
 			)
 		) {
 			$new_data_array = array();
@@ -380,7 +383,7 @@ class M_Chart_Highcharts {
 				),
 			);
 
-			if ( 
+			if (
 				   'radar' == $this->post_meta['type']
 				|| 'radar-area' == $this->post_meta['type']
 				|| 'polar' == $this->post_meta['type']
@@ -391,6 +394,22 @@ class M_Chart_Highcharts {
 			$chart_args['tooltip'] = array(
 				'pointFormat' => '<b>{point.y}</b>',
 			);
+		} elseif (
+			   'radar' == $this->post_meta['type']
+			|| 'radar-area' == $this->post_meta['type']
+		) {
+			$set_names = $this->post_meta['set_names'];
+
+			foreach ( $this->post_meta['data']['sets'] as $key => $data ) {
+				$parse = m_chart()->parse()->parse_data( $data, $this->post_meta['parse_in'] );
+
+				$data_array = array_map( array( $this, 'fix_null_values' ), $parse->set_data );
+
+				$chart_args['series'][] = array(
+					'name' => isset( $set_names[ $key ] ) ? $set_names[ $key ] : 'Sheet 1',
+					'data' => $data_array,
+				);
+			}
 		} elseif ( 'scatter' == $this->post_meta['type'] ) {
 			$set_names = $this->post_meta['set_names'];
 
@@ -644,13 +663,15 @@ class M_Chart_Highcharts {
 				$file = basename( $file );
 
 				$themes[ $file ] = (object) array(
-					'name'    => $name,
 					'slug'    => substr( $file, 0, -4 ),
+					'name'    => $name,
 					'file'    => $file,
 					'options' => require $theme_base . $file,
 				);
 			}
 		}
+
+		asort( $themes );
 
 		return $themes;
 	}

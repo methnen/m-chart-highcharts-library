@@ -101,13 +101,13 @@ class M_Chart_Highcharts_Library {
 		// Only load these if we are on an appropriate post page
 		$library = isset( $_GET['post'] ) ? m_chart()->get_post_meta( $_GET['post'], 'library' ) : m_chart()->get_library();
 
-		if ( 
+		if (
 			   ( 'post' == $screen->base && 'highcharts' == $library )
 			|| ( 'edit' == $screen->base && m_chart()->slug == $screen->post_type )
 		) {
 			// Highcharts export.js is required for the image generation
 			wp_enqueue_script( 'highcharts-exporting' );
-			
+
 			wp_enqueue_script(
 				'm-chart-highcharts-admin',
 				$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',

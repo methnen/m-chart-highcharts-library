@@ -20,7 +20,7 @@ var m_chart_highcharts_admin = {};
 
 	// Handle chart type input changes so the settings UI only reflects appropriate options
 	m_chart_highcharts_admin.handle_chart_type = function( event ) {
-		var chart_type        = $( this ).attr( 'value' );
+		var chart_type        = $( this ).val();
 		var $chart_meta_box   = $( document.getElementById( 'm-chart' ) );
 		var $spreadsheet_tabs = $( document.getElementById( 'hands-on-table-sheet-tabs' ) );
 
@@ -33,7 +33,6 @@ var m_chart_highcharts_admin = {};
 			|| 'column' === chart_type
 			|| 'bar' === chart_type
 		) {
-			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
 			$spreadsheet_tabs.addClass( 'hide' );
 		}
 
@@ -41,8 +40,7 @@ var m_chart_highcharts_admin = {};
 			   'column' === chart_type
 			|| 'bar' === chart_type
 		) {
-			$chart_meta_box.find( '.shared' ).addClass( 'hide' );
-			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
+			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
 		}
 
 		if (
@@ -75,20 +73,23 @@ var m_chart_highcharts_admin = {};
 			|| 'radar-area' === chart_type
 		) {
 			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
-			chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.removeClass( 'hide' );
 		}
 	};
 
 	// Generate a PNG image out of a rendered chart
 	m_chart_highcharts_admin.generate_image_from_chart = function( event ) {
-		var svg    = event.chart.getSVG();
-		var width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
-		var height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+		var svg = event.chart.getSVG();
 
-		// Double the width/height values in the SVG
-	    svg = svg.replace( 'width="' + width + '"', 'width="' + ( width * 2 ) + '"' );
-	    svg = svg.replace( 'height="' + height + '"', 'height="' + ( height * 2 ) + '"' );
+		var chart_width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+		var chart_height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+
+		var image_width  = chart_width * m_chart_admin.image_multiplier;
+		var image_height = chart_height * m_chart_admin.image_multiplier;
+
+		// Multiply the width/height values of the SVG
+	    svg = svg.replace( 'width="' + chart_width + '"', 'width="' + image_width + '"' );
+	    svg = svg.replace( 'height="' + chart_height + '"', 'height="' + image_height + '"' );
 
 		// Create a Canvas object out of the SVG
 		var $canvas = $( '#m-chart-canvas-render-' + event.post_id );
