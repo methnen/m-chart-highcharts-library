@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.0.6';
+	public $version = '1.1';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
@@ -101,7 +101,13 @@ class M_Chart_Highcharts_Library {
 		// Only load these if we are on an appropriate post page
 		$library = isset( $_GET['post'] ) ? m_chart()->get_post_meta( $_GET['post'], 'library' ) : m_chart()->get_library();
 
-		if ( 'post' == $screen->base && 'highcharts' == $library ) {
+		if (
+			   ( 'post' == $screen->base && 'highcharts' == $library )
+			|| ( 'edit' == $screen->base && m_chart()->slug == $screen->post_type )
+		) {
+			// Highcharts export.js is required for the image generation
+			wp_enqueue_script( 'highcharts-exporting' );
+
 			wp_enqueue_script(
 				'm-chart-highcharts-admin',
 				$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
@@ -229,16 +235,21 @@ class M_Chart_Highcharts_Library {
 	 * @return array $scripts an array of scripts needed for the iframe to render the chart
 	 */
 	public function m_chart_iframe_scripts( $scripts, $post_id ) {
-		$library = m_chart()->get_post_meta( $post->ID, 'library' );
+		$library = m_chart()->get_post_meta( $post_id, 'library' );
 
 		// If Highcharts isn't the library type we'll stop here
 		if ( $library != $this->library ) {
 			return $scripts;
 		}
 
-		$type = m_chart()->get_post_meta( $post->ID, 'type' );
+		$type = m_chart()->get_post_meta( $post_id, 'type' );
 
-		if ( 'bubble' == $type ) {
+		if (
+			   'bubble' == $type
+			|| 'radar' == $type
+			|| 'radar-area' == $type
+			|| 'polar' == $type
+		) {
 			$scripts[] = 'highcharts-more';
 		}
 

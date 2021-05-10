@@ -1,0 +1,8 @@
+.column-m-chart-library {
+	span {
+		&.highcharts {
+			background-image: url(../external/highcharts/highcharts-logo.svg);
+			background-size: contain
+		}
+	}
+}

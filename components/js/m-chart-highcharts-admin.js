@@ -33,7 +33,6 @@ var m_chart_highcharts_admin = {};
 			|| 'column' === chart_type
 			|| 'bar' === chart_type
 		) {
-			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
 			$spreadsheet_tabs.addClass( 'hide' );
 		}
 
@@ -41,8 +40,7 @@ var m_chart_highcharts_admin = {};
 			   'column' === chart_type
 			|| 'bar' === chart_type
 		) {
-			$chart_meta_box.find( '.shared' ).addClass( 'hide' );
-			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
+			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
 		}
 
 		if (
@@ -52,7 +50,10 @@ var m_chart_highcharts_admin = {};
 			$spreadsheet_tabs.addClass( 'hide' );
 		}
 
-		if ( 'pie' === chart_type ) {
+		if (
+			   'pie' === chart_type
+			|| 'polar' === chart_type
+		) {
 			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
 			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.addClass( 'hide' );
@@ -66,32 +67,44 @@ var m_chart_highcharts_admin = {};
 			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
 			$spreadsheet_tabs.removeClass( 'hide' );
 		}
+
+		if (
+			   'radar' === chart_type
+			|| 'radar-area' === chart_type
+		) {
+			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
+			$spreadsheet_tabs.removeClass( 'hide' );
+		}
 	};
 
 	// Generate a PNG image out of a rendered chart
 	m_chart_highcharts_admin.generate_image_from_chart = function( event ) {
-		var svg    = event.chart.getSVG();
-		var width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
-		var height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+		var svg = event.chart.getSVG();
 
-		// Double the width/height values in the SVG
-	    svg = svg.replace( 'width="' + width + '"', 'width="' + ( width * 2 ) + '"' );
-	    svg = svg.replace( 'height="' + height + '"', 'height="' + ( height * 2 ) + '"' );
+		var chart_width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+		var chart_height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
+
+		var image_width  = chart_width * m_chart_admin.image_multiplier;
+		var image_height = chart_height * m_chart_admin.image_multiplier;
+
+		// Multiply the width/height values of the SVG
+	    svg = svg.replace( 'width="' + chart_width + '"', 'width="' + image_width + '"' );
+	    svg = svg.replace( 'height="' + chart_height + '"', 'height="' + image_height + '"' );
 
 		// Create a Canvas object out of the SVG
 		var $canvas = $( '#m-chart-canvas-render-' + event.post_id );
-		m_chart_admin.canvas = $canvas.get( 0 );
 
-		canvg( m_chart_admin.canvas, svg );
+		m_chart_admin.canvas = $canvas[0].getContext( '2d' );
 
-		// Create Canvas context so we can play with it before saving
-		m_chart_admin.canvas_context = m_chart_admin.canvas.getContext( '2d' );
+		// Convert SVG to the canvas object
+		let v = canvg.Canvg.fromString( m_chart_admin.canvas, svg );
+		v.start();
 
 		$( '.m-chart' ).trigger({
 			type: 'canvas_done'
 		});
 
-		var img = m_chart_admin.canvas.toDataURL( 'image/png' );
+		var img = $canvas[0].toDataURL( 'image/png' );
 
 		// Save the image string to the text area so we can save it on update/publish
 		$( document.getElementById( 'm-chart-img' ) ).val( img );

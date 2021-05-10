@@ -1,60 +1,54 @@
-/* line 8, ../sass/_chart-settings.scss */
+.column-m-chart-library span.highcharts {
+	background-image: url(../external/highcharts/highcharts-logo.svg);
+	background-size: contain;
+}
+
 #m-chart .inside .settings .row.one p {
-  float: left;
-  margin-left: 1%;
-  width: 32%;
+	float: left;
+	margin-left: 1%;
+	width: 32%;
 }
-/* line 13, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.one p:first-child {
-  margin-left: 0;
+	margin-left: 0;
 }
-/* line 20, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.two p {
-  float: left;
-  margin-left: 1%;
-  width: 32%;
+	float: left;
+	margin-left: 1%;
+	width: 32%;
 }
-/* line 25, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.two p:first-child {
-  margin-left: 0;
+	margin-left: 0;
 }
-/* line 29, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.two p.shared {
-  display: none;
+	display: none;
 }
-/* line 35, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.two.show-shared p {
-  width: 24%;
+	width: 24%;
 }
-/* line 38, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.two.show-shared p.shared {
-  display: block;
+	display: block;
 }
-/* line 47, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.three p, #m-chart .inside .settings .row.five p {
-  float: left;
-  width: 73%;
+	float: left;
+	width: 73%;
 }
-/* line 51, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.three p.units, #m-chart .inside .settings .row.five p.units {
-  float: right;
-  width: 25%;
+	float: right;
+	width: 25%;
 }
-/* line 59, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.four p {
-  margin: 0;
+	margin-top: 5px;
 }
-/* line 62, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.four p label {
-  display: inline-block;
-  height: 23px;
+	display: inline-block;
+	height: 23px;
 }
-/* line 70, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.six p {
-  float: right;
-  width: 49%;
+	float: right;
+	width: 49%;
 }
-/* line 74, ../sass/_chart-settings.scss */
 #m-chart .inside .settings .row.six p:first-child {
-  float: left;
+	float: left;
 }
+
+/*# sourceMappingURL=m-chart-highcharts-library-admin.css.map */
