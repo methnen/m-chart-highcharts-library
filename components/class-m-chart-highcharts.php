@@ -135,7 +135,7 @@ class M_Chart_Highcharts {
 				'height'      => $this->post_meta['height'],
 			),
 			'title' => array(
-				'text' => $this->esc_title( apply_filters( 'the_title', $this->post->post_title ) ),
+				'text' => $this->esc_title( apply_filters( 'the_title', $this->post->post_title, $this->post->ID ) ),
 			),
 			'subtitle' => array(
 				'text' => $this->esc_title( $this->post_meta['subtitle'] ),
