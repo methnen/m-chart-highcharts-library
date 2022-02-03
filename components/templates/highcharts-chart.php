@@ -18,7 +18,7 @@ if ( ! $this->options_set ) {
 </div>
 <script type="text/javascript">
 	var m_chart_highcharts_<?php echo absint( $post_id ); ?>_<?php echo absint( $this->instance ); ?> = {
-		chart_args: <?php echo $this->unicode_aware_stripslashes( json_encode( $this->library( 'highcharts' )->get_chart_args( $post_id, $args ) ) ); ?>,
+		chart_args: <?php echo $this->unicode_aware_stripslashes( json_encode( $this->library( 'highcharts' )->get_chart_args( $post_id, $args ), JSON_HEX_QUOT ) ); ?>,
 		post_id: <?php echo absint( $post_id ); ?>,
 		instance: <?php echo absint( $this->instance ); ?>
 	};

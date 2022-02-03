@@ -1,9 +1,9 @@
 # M Chart Highcharts Library #
-**Contributors:** [methnen](https://profiles.wordpress.org/methnen)  
+**Contributors:** [methnen](https://profiles.wordpress.org/methnen/)  
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
-**Tested up to:** 5.7.2  
-**Stable tag:** 1.1.1  
+**Tested up to:** 5.9  
+**Stable tag:** 1.2  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -30,6 +30,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 	- WordPress Admin -> Charts -> Settings
 
 ## Changelog ##
+
+### 1.2 ###
+
+* Added support for [stacked column](https://github.com/methnen/m-chart/wiki/Types-of-charts#stacked-column), [stacked bar](https://github.com/methnen/m-chart/wiki/Types-of-charts#stacked-bar), and [doughnut](https://github.com/methnen/m-chart/wiki/Types-of-charts#doughnut) charts
+* Updated how settings are handled to support changes in M Chart 1.9
+* Updated Highcharts to the latest stable version (9.3.2)
 
 ### 1.1.1 ###
 
