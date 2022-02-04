@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.1.1';
+	public $version = '1.2';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
@@ -18,6 +18,7 @@ class M_Chart_Highcharts_Library {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
+		add_action( 'm_chart_settings_admin', array( $this, 'm_chart_settings_admin' ) );
 
 		add_filter( 'm_chart_get_libraries', array( $this, 'm_chart_get_libraries' ) );
 		add_filter( 'm_chart_chart_template', array( $this, 'm_chart_chart_template' ), 10, 2 );
@@ -123,6 +124,14 @@ class M_Chart_Highcharts_Library {
 				$this->version
 			);
 		}
+	}
+
+	/**
+	 * Add the Highcharts admin settings to the M Chart Settings page
+	 */
+	public function m_chart_settings_admin() {
+		$settings = m_chart()->get_settings();
+		require __DIR__ . '/templates/m-chart-settings-highcharts.php';
 	}
 
 	/**

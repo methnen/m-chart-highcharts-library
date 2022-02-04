@@ -5,25 +5,17 @@ module.exports = function( grunt ) {
 
 	// Project configuration.
 	grunt.initConfig({
-		sass: {
-			options: {
-				implementation: require('dart-sass'),
-				sourceMap: true,
-				indentType: 'tab',
-				indentWidth: 1,
-				outputStyle: 'expanded',
-			},
-			dist: {
+		'dart-sass': {
+			target: {
+				options: {
+					sourceMap: true,
+					indentType: 'tab',
+					indentWidth: 1,
+					outputStyle: 'expanded',
+				},
 				files: {
 					'components/css/m-chart-highcharts-library-admin.css': 'components/sass/m-chart-highcharts-library-admin.scss'
 				}
-			}
-		},
-		scsslint: {
-			allFiles: [ 'components/sass/*.scss' ],
-			options: {
-				config: '.scss-lint.yml',
-				colorizeOutput: true
 			}
 		},
 		wp_readme_to_markdown: {
@@ -92,11 +84,11 @@ module.exports = function( grunt ) {
 		},
 		watch: {
 			files: [ 'components/sass/*.scss' ],
-			tasks: [ 'sass', 'scsslint' ]
+			tasks: [ 'dart-sass' ]
 		}
 	});
 
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks );
 
-	grunt.registerTask( 'default', [ 'sass', 'wp_readme_to_markdown', 'scsslint', 'compress' ] );
+	grunt.registerTask( 'default', [ 'dart-sass', 'wp_readme_to_markdown', 'compress' ] );
 };

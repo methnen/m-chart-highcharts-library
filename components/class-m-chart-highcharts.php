@@ -14,8 +14,11 @@ class M_Chart_Highcharts {
 		'spline',
 		'area',
 		'column',
+		'stacked-column',
 		'bar',
+		'stacked-bar',
 		'pie',
+		'doughnut',
 		'scatter',
 		'bubble',
 		'radar',
@@ -23,18 +26,21 @@ class M_Chart_Highcharts {
 		'polar',
 	);
 	public $chart_types = array(
-		'line'       => 'line',
-		'spline'     => 'spline',
-		'area'       => 'area',
-		'column'     => 'column',
-		'bar'        => 'bar',
-		'pie'        => 'pie',
-		'scatter'    => 'scatter',
-		'bubble'     => 'bubble',
+		'line'           => 'line',
+		'spline'         => 'spline',
+		'area'           => 'area',
+		'column'         => 'column',
+		'stacked-column' => 'column',
+		'bar'            => 'bar',
+		'stacked-bar'    => 'bar',
+		'pie'            => 'pie',
+		'doughnut'       => 'pie',
+		'scatter'        => 'scatter',
+		'bubble'         => 'bubble',
 		// These three actually get reset later
-		'radar'      => 'polar',
-		'radar-area' => 'polar',
-		'polar'      => 'polar',
+		'radar'          => 'polar',
+		'radar-area'     => 'polar',
+		'polar'          => 'polar',
 	);
 	public $type_option_names = array();
 	public $theme_directories;
@@ -50,17 +56,20 @@ class M_Chart_Highcharts {
 		);
 
 		$this->type_option_names = array(
-			'line'       => esc_html__( 'Line', 'm-chart' ),
-			'spline'     => esc_html__( 'Spline', 'm-chart' ),
-			'area'       => esc_html__( 'Area', 'm-chart' ),
-			'column'     => esc_html__( 'Column', 'm-chart' ),
-			'bar'        => esc_html__( 'Bar', 'm-chart' ),
-			'pie'        => esc_html__( 'Pie', 'm-chart' ),
-			'scatter'    => esc_html__( 'Scatter', 'm-chart' ),
-			'bubble'     => esc_html__( 'Bubble', 'm-chart' ),
-			'radar'      => esc_html__( 'Radar', 'm-chart' ),
-			'radar-area' => esc_html__( 'Radar Area', 'm-chart' ),
-			'polar'      => esc_html__( 'Polar', 'm-chart' ),
+			'line'           => esc_html__( 'Line', 'm-chart' ),
+			'spline'         => esc_html__( 'Spline', 'm-chart' ),
+			'area'           => esc_html__( 'Area', 'm-chart' ),
+			'column'         => esc_html__( 'Column', 'm-chart' ),
+			'stacked-column' => esc_html__( 'Stacked Column', 'm-chart' ),
+			'bar'            => esc_html__( 'Bar', 'm-chart' ),
+			'stacked-bar'    => esc_html__( 'Stacked Bar', 'm-chart' ),
+			'pie'            => esc_html__( 'Pie', 'm-chart' ),
+			'doughnut'       => esc_html__( 'Doughnut', 'm-chart' ),
+			'scatter'        => esc_html__( 'Scatter', 'm-chart' ),
+			'bubble'         => esc_html__( 'Bubble', 'm-chart' ),
+			'radar'          => esc_html__( 'Radar', 'm-chart' ),
+			'radar-area'     => esc_html__( 'Radar Area', 'm-chart' ),
+			'polar'          => esc_html__( 'Polar', 'm-chart' ),
 		);
 	}
 
@@ -157,7 +166,7 @@ class M_Chart_Highcharts {
 					),
 					'connectNulls' => true,
 				),
-				$this->post_meta['type'] => array(
+				$this->chart_types[ $this->post_meta['type'] ] => array(
 					'dataLabels' => array(
 						'enabled' => $this->post_meta['labels'] ? true : false,
 					),
@@ -181,6 +190,16 @@ class M_Chart_Highcharts {
 		} elseif ( 'polar' == $this->post_meta['type'] ) {
 			$chart_args['chart']['polar'] = true;
 			$chart_args['chart']['type'] = 'column';
+		}
+
+		// Stacked column/bar charts have an additional paramter we need to set
+		if ( 'stacked-column' == $this->post_meta['type'] || 'stacked-bar' == $this->post_meta['type'] ) {
+			$chart_args['plotOptions'][ $this->chart_types[ $this->post_meta['type'] ] ]['stacking'] = 'normal';
+		}
+
+		// Doughnut charts are just pie charts with an innerSize value set
+		if ( 'doughnut' == $this->post_meta['type'] ) {
+			$chart_args['plotOptions'][ $this->chart_types[ $this->post_meta['type'] ] ]['innerSize'] = '50%';
 		}
 
 		// We don't want to set a width unless an explicit width was given
@@ -353,6 +372,7 @@ class M_Chart_Highcharts {
 
 		if (
 			   'pie' == $this->post_meta['type']
+			|| 'doughnut' == $this->post_meta['type']
 			|| 'both' != m_chart()->parse()->value_labels_position
 			&& (
 				   'scatter' != $this->post_meta['type']
@@ -370,14 +390,14 @@ class M_Chart_Highcharts {
 				);
 			}
 
-			if ( 'pie' == $this->post_meta['type'] ) {
+			if ( 'pie' == $this->post_meta['type'] || 'doughnut' == $this->post_meta['type'] ) {
 				// Don't need these anymore for pie charts
 				unset( $chart_args['xAxis']['categories'] );
 			}
 
 			$chart_args['series'] = array(
 				array(
-					'type'         => $this->post_meta['type'],
+					'type'         => $this->chart_types[ $this->post_meta['type'] ],
 					'showInLegend' => true,
 					'data'         => $new_data_array,
 				),
