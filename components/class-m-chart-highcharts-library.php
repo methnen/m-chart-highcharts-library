@@ -27,6 +27,8 @@ class M_Chart_Highcharts_Library {
 		add_filter( 'm_chart_instant_preview_support', array( $this, 'm_chart_instant_preview_support'), 10, 2 );
 		add_filter( 'm_chart_library_class', array( $this, 'm_chart_library_class'), 10, 2 );
 		add_filter( 'm_chart_iframe_scripts', array( $this, 'm_chart_iframe_scripts' ), 10, 2 );
+		add_filter( 'm_chart_default_settings', array( $this, 'm_chart_default_settings' ) );
+		add_filter( 'm_chart_get_post_meta', array( $this, 'm_chart_get_post_meta' ), 10, 3 );
 	}
 
 	/**
@@ -264,6 +266,41 @@ class M_Chart_Highcharts_Library {
 
 		// Return the scripts
 		return $scripts;
+	}
+
+	/**
+	 * Hook to the m_chart_default_settings filter and add some additional default settings
+	 *
+	 * @param array $default_settings an array the default M Chart settings
+	 *
+	 * @return array $default_settings the modified array of default M Chart settings
+	 */
+	public function m_chart_default_settings( $default_settings ) {
+		//return $default_settings;
+		$default_settings['default_highcharts_theme'] = '_default';
+
+		return $default_settings;
+	}
+
+	/**
+	 * Hook to the m_chart_get_post_meta filter and modify the $post_meta array as needed for Highcharts
+	 *
+	 * @param array $post_meta the chart's post_meta after being parsed by get_post_meta
+	 * @param array $raw_post_meta the chart's post_meta before being parsed by get_post_meta
+	 * @param int $post_id WP post ID of the chart
+	 *
+	 * @return array $post_meta the modified post_meta
+	 */
+	public function m_chart_get_post_meta( $post_meta, $raw_post_meta, $post_id ) {
+		if ( $this->library != $post_meta['library'] ) {
+			return $post_meta;
+		}
+
+		if ( ! isset( $raw_post_meta['theme'] ) ) {
+			$post_meta['theme'] = m_chart()->get_settings( 'default_highcharts_theme' );
+		}
+
+		return $post_meta;
 	}
 
 	/**
