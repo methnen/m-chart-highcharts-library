@@ -84,7 +84,11 @@ var m_chart_highcharts_admin = {};
 
 	// Generate a PNG image out of a rendered chart
 	m_chart_highcharts_admin.generate_image_from_chart = function( event ) {
-		var svg = event.chart.getSVG();
+		var svg = event.chart.getSVG({
+			chart: {
+				width: m_chart_admin.image_width
+			}
+		});
 
 		var chart_width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
 		var chart_height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];

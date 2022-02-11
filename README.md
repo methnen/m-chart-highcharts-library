@@ -3,7 +3,7 @@
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
 **Tested up to:** 5.9  
-**Stable tag:** 1.2.2  
+**Stable tag:** 1.2.3  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -30,6 +30,10 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 	- WordPress Admin -> Charts -> Settings
 
 ## Changelog ##
+
+### 1.2.3 ###
+
+* Added support for image width setting in M Chart 1.9.4
 
 ### 1.2.2 ###
 
