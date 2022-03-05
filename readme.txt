@@ -43,7 +43,7 @@ function filter_m_chart_enable_highcharts_accessibility( $enabled, $post_id, $co
 
 }
 
-add_filter( 'm_chart_chart_args', 'filter_m_chart_enable_highcharts_accessibility', 10, 2 );
+add_filter( 'm_chart_enable_highcharts_accessibility', 'filter_m_chart_enable_highcharts_accessibility', 10, 2 );
 `
 
 **Note:** Highcharts also recommends including the export module to further increase accessibility.
@@ -66,7 +66,7 @@ function filter_m_chart_enable_highcharts_export( $enabled, $post_id, $context )
 
 }
 
-add_filter( 'm_chart_chart_args', 'filter_m_chart_enable_highcharts_export', 10, 2 );
+add_filter( 'm_chart_enable_highcharts_export', 'filter_m_chart_enable_highcharts_export', 10, 2 );
 `
 
 == Changelog ==
