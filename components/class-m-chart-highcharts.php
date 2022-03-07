@@ -619,10 +619,10 @@ class M_Chart_Highcharts {
 	 *
 	 * @return array an array of themes
 	 */
-	public function get_themes() {
-		$cache_key = 'm-chart-highcharts-available-themes';
+	public function get_themes( $force = false ) {
+		$cache_key = 'highcharts-available-themes';
 
-		if ( $themes = wp_cache_get( $cache_key ) ) {
+		if ( ! $force && $themes = wp_cache_get( $cache_key, m_chart()->slug ) ) {
 			return $themes;
 		}
 
@@ -634,7 +634,8 @@ class M_Chart_Highcharts {
 
 		$themes = apply_filters( 'm_chart_highcharts_available_themes', $themes );
 
-		wp_cache_set( $cache_key, $themes );
+		// Set the cache, we'll regenerate this when someone visits the settings page
+		wp_cache_set( $cache_key, $themes, m_chart()->slug );
 
 		return $themes;
 	}
