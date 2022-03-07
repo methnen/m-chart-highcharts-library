@@ -29,52 +29,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 3. Go to the M Chart Settings and set Highcharts as the Library
 	- WordPress Admin -> Charts -> Settings
 
-== Highcharts Accessibility module ==
-
-The [Highcharts Accessiblity module](https://www.highcharts.com/docs/accessibility/accessibility-module) is disabled by default.
-
-To enable the module, use the `m_chart_enable_highcharts_accessibility` filter hook:
-
-`
-function filter_m_chart_enable_highcharts_accessibility( $enabled, $post_id, $context ) {
-
-    // always make the chart accessible
-    return true;
-
-}
-
-add_filter( 'm_chart_enable_highcharts_accessibility', 'filter_m_chart_enable_highcharts_accessibility', 10, 2 );
-`
-
-**Note:** Highcharts also recommends including the export module to further increase accessibility.
-
-== Highcharts Export module ==
-
-The [Highcharts Export module](https://www.highcharts.com/docs/accessibility/accessibility-module) is disabled by default.
-
-To enable the module, use the `m_chart_enable_highcharts_export` filter hook:
-
-`
-function filter_m_chart_enable_highcharts_export( $enabled, $post_id, $context ) {
-
-    // don't show export options when embedded
-    if ( $context != 'iframe' ) {
-        $enabled = true;
-    }
-
-    return $enabled;
-
-}
-
-add_filter( 'm_chart_enable_highcharts_export', 'filter_m_chart_enable_highcharts_export', 10, 2 );
-`
-
 == Changelog ==
 
 = 1.2.3 =
 
 * Added support for image width setting in M Chart 1.9.4
-* Added ability to enable the accessibility and export modules for Highcharts
+* Added ability to enable the [accessibility](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_accessibility) and [export](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_export) modules for Highcharts
 
 = 1.2.2 =
 
