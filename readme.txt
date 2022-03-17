@@ -34,6 +34,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 = 1.2.3 =
 
 * Added support for image width setting in M Chart 1.9.4
+* Image generation now always waits for the canvas to be ready before generation the PNG
 
 = 1.2.2 =
 
