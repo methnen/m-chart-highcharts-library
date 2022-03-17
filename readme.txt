@@ -34,6 +34,8 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 = 1.2.3 =
 
 * Added support for image width setting in M Chart 1.9.4
+* Added ability to modify the list of [available Highcharts themes](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_highcharts_available_themes)
+* Added caching of Highcharts theme lookup (refreshed when visiting settings page)
 * Added ability to enable the [accessibility](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_accessibility) and [export](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_export) modules for Highcharts
 
 = 1.2.2 =

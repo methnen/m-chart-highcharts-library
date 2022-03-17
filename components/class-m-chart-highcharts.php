@@ -630,12 +630,23 @@ class M_Chart_Highcharts {
 	 *
 	 * @return array an array of themes
 	 */
-	public function get_themes() {
+	public function get_themes( $force = false ) {
+		$cache_key = 'highcharts-available-themes';
+
+		if ( ! $force && $themes = wp_cache_get( $cache_key, m_chart()->slug ) ) {
+			return $themes;
+		}
+
 		$themes = array();
 
 		foreach ( $this->theme_directories as $directory ) {
 			$themes = array_merge( $themes, $this->_get_themes_readdir( $directory ) );
 		}
+
+		$themes = apply_filters( 'm_chart_highcharts_available_themes', $themes );
+
+		// Set the cache, we'll regenerate this when someone visits the settings page
+		wp_cache_set( $cache_key, $themes, m_chart()->slug );
 
 		return $themes;
 	}
@@ -648,15 +659,11 @@ class M_Chart_Highcharts {
 	 * @return string/boolean requested theme options or false if they could not be found
 	 */
 	private function get_theme( $slug ) {
-		foreach ( $this->theme_directories as $directory ) {
-			if ( ! $themes = $this->_get_themes_readdir( $directory ) ) {
-				continue;
-			}
+		$themes = $this->get_themes();
 
-			foreach ( $themes as $theme ) {
-				if ( $theme->slug == $slug ) {
-					return $theme->options;
-				}
+		foreach ( $themes as $theme ) {
+			if ( $theme->slug == $slug ) {
+				return $theme->options;
 			}
 		}
 
