@@ -38,6 +38,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 * Added caching of Highcharts theme lookup (refreshed when visiting settings page)
 * Added ability to enable the [accessibility](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_accessibility) and [export](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_export) modules for Highcharts
 * Image generation now always waits for the canvas to be ready before generation the PNG
+* Updated Highcharts to the latest stable version (10.0.0)
 
 = 1.2.2 =
 
