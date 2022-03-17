@@ -71,6 +71,13 @@ class M_Chart_Highcharts_Library {
 			$this->version
 		);
 
+		wp_register_script(
+			'highcharts-accessibility',
+			$this->plugin_url . '/components/external/highcharts/accessibility.js',
+			array( 'highcharts', 'jquery' ),
+			$this->version
+		);
+
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -262,6 +269,14 @@ class M_Chart_Highcharts_Library {
 			|| 'polar' == $type
 		) {
 			$scripts[] = 'highcharts-more';
+		}
+
+		if ( true === apply_filters( 'm_chart_enable_highcharts_export', false, $post_id, 'iframe' ) ) {
+			$scripts[] = 'highcharts-export-data';
+		}
+
+		if ( true === apply_filters( 'm_chart_enable_highcharts_accessibility', false, $post_id, 'iframe' ) ) {
+			$scripts[] = 'highcharts-accessibility';
 		}
 
 		// Return the scripts
