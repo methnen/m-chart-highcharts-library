@@ -10,7 +10,7 @@
 			<td>
 				<select name="<?php echo esc_attr( m_chart()->admin()->get_field_name( 'default_highcharts_theme' ) ); ?>" id="<?php echo m_chart()->admin()->get_field_id( 'default_highcharts_theme' ); ?>">
 					<?php
-					foreach ( m_chart()->library( 'highcharts' )->get_themes() as $theme ) {
+					foreach ( m_chart()->library( 'highcharts' )->get_themes( true ) as $theme ) {
 						?>
 						<option value="<?php echo esc_attr( $theme->slug ); ?>"<?php selected( $theme->slug, $settings['default_highcharts_theme'] ); ?>>
 							<?php esc_html_e( $theme->name, 'm-chart' ); ?>
