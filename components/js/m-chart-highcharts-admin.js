@@ -84,7 +84,11 @@ var m_chart_highcharts_admin = {};
 
 	// Generate a PNG image out of a rendered chart
 	m_chart_highcharts_admin.generate_image_from_chart = function( event ) {
-		var svg = event.chart.getSVG();
+		var svg = event.chart.getSVG({
+			chart: {
+				width: m_chart_admin.image_width
+			}
+		});
 
 		var chart_width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
 		var chart_height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
@@ -96,26 +100,26 @@ var m_chart_highcharts_admin = {};
 	    svg = svg.replace( 'width="' + chart_width + '"', 'width="' + image_width + '"' );
 	    svg = svg.replace( 'height="' + chart_height + '"', 'height="' + image_height + '"' );
 
-		// Create a Canvas object out of the SVG
-		var $canvas = $( '#m-chart-canvas-render-' + event.post_id );
+		let $canvas = document.getElementById( 'm-chart-canvas-render-' + event.post_id );
 
-		m_chart_admin.canvas = $canvas[0].getContext( '2d' );
+		this.ctx = $canvas.getContext( '2d' );
+        
+		let v = canvg.Canvg.fromString( this.ctx, svg );
+		
+		let render = v.render();
+		
+		// Wait for the render to finish before we try to make the PNG
+		render.then(function() {
+			$( '.m-chart' ).trigger({
+				type: 'canvas_done'
+			});
+			
+			// Save the image string to the text area so we can save it on update/publish
+			$( document.getElementById( 'm-chart-img' ) ).val( $canvas.toDataURL( 'image/png' ) );
 
-		// Convert SVG to the canvas object
-		let v = canvg.Canvg.fromString( m_chart_admin.canvas, svg );
-		v.start();
-
-		$( '.m-chart' ).trigger({
-			type: 'canvas_done'
+			// Allow form submission now that we've got a valid img value set
+			m_chart_admin.form_submission( true );
 		});
-
-		var img = $canvas[0].toDataURL( 'image/png' );
-
-		// Save the image string to the text area so we can save it on update/publish
-		$( document.getElementById( 'm-chart-img' ) ).val( img );
-
-		// Allow form submission now that we've got a valid img value set
-		m_chart_admin.form_submission( true );
 	};
 
 	// Refresh the chart arguments
