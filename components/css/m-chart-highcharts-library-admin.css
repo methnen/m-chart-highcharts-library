@@ -1,54 +1,54 @@
 .column-m-chart-library span.highcharts {
-	background-image: url(../external/highcharts/highcharts-logo.svg);
-	background-size: contain;
+  background-image: url(../external/highcharts/highcharts-logo.svg);
+  background-size: contain;
 }
 
 #m-chart .inside .settings .row.one p {
-	float: left;
-	margin-left: 1%;
-	width: 32%;
+  float: left;
+  margin-left: 1%;
+  width: 32%;
 }
 #m-chart .inside .settings .row.one p:first-child {
-	margin-left: 0;
+  margin-left: 0;
 }
 #m-chart .inside .settings .row.two p {
-	float: left;
-	margin-left: 1%;
-	width: 32%;
+  float: left;
+  margin-left: 1%;
+  width: 32%;
 }
 #m-chart .inside .settings .row.two p:first-child {
-	margin-left: 0;
+  margin-left: 0;
 }
 #m-chart .inside .settings .row.two p.shared {
-	display: none;
+  display: none;
 }
 #m-chart .inside .settings .row.two.show-shared p {
-	width: 24%;
+  width: 24%;
 }
 #m-chart .inside .settings .row.two.show-shared p.shared {
-	display: block;
+  display: block;
 }
 #m-chart .inside .settings .row.three p, #m-chart .inside .settings .row.five p {
-	float: left;
-	width: 73%;
+  float: left;
+  width: 73%;
 }
 #m-chart .inside .settings .row.three p.units, #m-chart .inside .settings .row.five p.units {
-	float: right;
-	width: 25%;
+  float: right;
+  width: 25%;
 }
 #m-chart .inside .settings .row.four p {
-	margin-top: 5px;
+  margin-top: 5px;
 }
 #m-chart .inside .settings .row.four p label {
-	display: inline-block;
-	height: 23px;
+  display: inline-block;
+  height: 23px;
 }
 #m-chart .inside .settings .row.six p {
-	float: right;
-	width: 49%;
+  float: right;
+  width: 49%;
 }
 #m-chart .inside .settings .row.six p:first-child {
-	float: left;
+  float: left;
 }
 
 /*# sourceMappingURL=m-chart-highcharts-library-admin.css.map */
