@@ -34,6 +34,8 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 ### 1.2.4 ###
 
 * Tweaks to support M Chart 1.12
+* Updated the build scripts to use npm instead of Grunt
+* Some SASS code and syntax cleanup
 
 ### 1.2.3 ###
 
