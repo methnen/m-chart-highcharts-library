@@ -37,11 +37,11 @@
   width: 25%;
 }
 #m-chart .inside .settings .row.four p {
-  margin-top: 5px;
+  margin-top: rem-calc(5);
 }
 #m-chart .inside .settings .row.four p label {
   display: inline-block;
-  height: 23px;
+  height: rem-calc(23);
 }
 #m-chart .inside .settings .row.six p {
   float: right;
