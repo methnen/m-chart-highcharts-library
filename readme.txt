@@ -3,7 +3,7 @@ Contributors: methnen
 Tags: highcharts, graphs, charts, data, wordpress
 Requires at least: 4.2
 Tested up to: 5.9
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: MIT
 
 Adds the Highcharts library to M Chart.
@@ -16,7 +16,7 @@ This plugin will do nothing useful on it's own and requires [M Chart](https://wo
 
 **Please download from this URL: [M Chart Highcharts Library](https://github.com/methnen/m-chart-highcharts-library/raw/master/plugin.zip)**
 
-**Note:** Highcharts is licensed under the CC Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) Creative Commons license. Essenetially this means it's free to use for non commercial purposes. Otherwise it requries you to [purchase a license](https://shop.highsoft.com/highcharts) from [Highsoft](https://www.highcharts.com/about).
+**Note:** Highcharts is licensed under the CC Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) Creative Commons license. Essenetially this means it's free to use for non commercial purposes. Otherwise it requries you to [purchase a license](https://shop.highcharts.com) from [Highsoft](https://www.highcharts.com/about).
 
 For full documentation please see the [Wiki](https://github.com/methnen/m-chart/wiki).
 
@@ -30,6 +30,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 	- WordPress Admin -> Charts -> Settings
 
 == Changelog ==
+
+= 1.2.4 =
+
+* Tweaks to support M Chart 1.12
+* Updated the build scripts to use npm instead of Grunt
+* Some SASS code and syntax cleanup
 
 = 1.2.3 =
 

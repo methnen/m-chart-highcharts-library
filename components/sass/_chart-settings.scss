@@ -57,11 +57,11 @@
 
 				&.four {
 					p {
-						margin-top: 5px;
+						margin-top: rem-calc(5);
 
 						label {
 							display: inline-block;
-							height: 23px;
+							height: rem-calc(23);
 						}
 					}
 				}

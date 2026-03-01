@@ -1,14 +1,15 @@
 {
   "name": "m-chart-highcharts-library",
   "devDependencies": {
-    "grunt-dart-sass": "^2.0.1",
-    "grunt-contrib-compress": "^2.0.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-scss-lint": "^0.5.0",
-    "grunt-wp-readme-to-markdown": "^2.1.0",
-    "matchdep": "^2.0.0"
+    "archiver": "^6.0.0",
+    "sass": "^1.0.0",
+    "wp-readme-to-markdown": "^1.0.0"
   },
-  "dependencies": {
-    "grunt": "^1.4.0"
+  "scripts": {
+    "build:css": "sass --source-map --style=expanded components/sass/m-chart-highcharts-library-admin.scss components/css/m-chart-highcharts-library-admin.css",
+    "build:readme": "wp-readme-to-md --screenshot-url=https://methnen.com/misc/m-chart/{screenshot}.png",
+    "build:zip": "node bin/build-zip.js",
+    "build": "npm run build:css && npm run build:readme && npm run build:zip",
+    "watch": "sass --watch components/sass/m-chart-highcharts-library-admin.scss:components/css/m-chart-highcharts-library-admin.css"
   }
 }

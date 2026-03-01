@@ -1,5 +1,8 @@
 // Global
 
+@use 'sass:list';
+@use 'sass:math';
+
 @mixin clearfix {
 	&::after {
 		clear: both;
@@ -8,7 +11,25 @@
 	}
 }
 
-$handsontable-cell-border-color: #cccccc;
+$rem-base: 16;
+
+@function rem-calc( $values, $base-value: $rem-base ) {
+	$rem-values: ();
+
+	@each $value in $values {
+		@if $value == 0 {
+			$rem-values: list.append( $rem-values, 0 );
+		} @else {
+			$rem-values: list.append( $rem-values, math.div( $value, $base-value ) * 1rem );
+		}
+	}
+
+	@if list.length( $rem-values ) == 1 {
+		@return list.nth( $rem-values, 1 );
+	}
+
+	@return $rem-values;
+}
 
 $wp-admin-black: #000000;
 $wp-admin-red: #c80011;

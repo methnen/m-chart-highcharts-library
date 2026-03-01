@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.2.3';
+	public $version = '1.2.4';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
@@ -115,6 +115,16 @@ class M_Chart_Highcharts_Library {
 			   ( 'post' == $screen->base && 'highcharts' == $library )
 			|| ( 'edit' == $screen->base && m_chart()->slug == $screen->post_type )
 		) {
+			// Admin panel CSS
+			wp_enqueue_style(
+				'm-chart-highcharts-library-admin',
+				$this->plugin_url . '/components/css/m-chart-highcharts-library-admin.css',
+				array( 'm-chart-admin' ),
+				$this->version
+			);
+		}
+
+		if ( 'post' == $screen->base && 'highcharts' == $library ) {
 			// Highcharts export.js is required for the image generation
 			wp_enqueue_script( 'highcharts-exporting' );
 
@@ -122,14 +132,6 @@ class M_Chart_Highcharts_Library {
 				'm-chart-highcharts-admin',
 				$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
 				array( 'm-chart-admin', 'highcharts', 'jquery' ),
-				$this->version
-			);
-
-			// Admin panel CSS
-			wp_enqueue_style(
-				'm-chart-highcharts-library-admin',
-				$this->plugin_url . '/components/css/m-chart-highcharts-library-admin.css',
-				array( 'm-chart-admin' ),
 				$this->version
 			);
 		}
