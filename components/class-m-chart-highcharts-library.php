@@ -19,10 +19,11 @@ class M_Chart_Highcharts_Library {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_action( 'm_chart_settings_admin', array( $this, 'm_chart_settings_admin' ) );
+		add_action( 'm_chart_admin_scripts', array( $this, 'm_chart_admin_scripts' ), 10, 2 );
 
 		add_filter( 'm_chart_get_libraries', array( $this, 'm_chart_get_libraries' ) );
 		add_filter( 'm_chart_chart_template', array( $this, 'm_chart_chart_template' ), 10, 2 );
-		add_filter( 'm_chart_settings_template', array( $this, 'm_chart_settings_template' ), 10, 2 );
+		add_filter( 'm_chart_react_admin_support', array( $this, 'm_chart_react_admin_support' ), 10, 2 );
 		add_filter( 'm_chart_image_support', array( $this, 'm_chart_image_support'), 10, 2 );
 		add_filter( 'm_chart_instant_preview_support', array( $this, 'm_chart_instant_preview_support'), 10, 2 );
 		add_filter( 'm_chart_library_class', array( $this, 'm_chart_library_class'), 10, 2 );
@@ -95,7 +96,7 @@ class M_Chart_Highcharts_Library {
 	}
 
 	/**
-	 * Load CSS/Javascript necessary for the interface
+	 * Load CSS necessary for the interface
 	 *
 	 * @param object the current screen object as passed by the current_screen action hook
 	 */
@@ -123,16 +124,45 @@ class M_Chart_Highcharts_Library {
 				$this->version
 			);
 		}
+	}
 
-		if ( 'post' == $screen->base && 'highcharts' == $library ) {
-			// Highcharts export.js is required for the image generation
-			wp_enqueue_script( 'highcharts-exporting' );
+	/**
+	 * Enqueue Highcharts admin scripts when on a Highcharts chart edit page
+	 *
+	 * @param string $library the active library
+	 * @param int $post_id WP post ID of the chart being edited
+	 */
+	public function m_chart_admin_scripts( $library, $post_id ) {
+		if ( $library != $this->library ) {
+			return;
+		}
 
-			wp_enqueue_script(
-				'm-chart-highcharts-admin',
-				$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
-				array( 'm-chart-admin', 'highcharts', 'jquery' ),
-				$this->version
+		// Highcharts export.js is required for the image generation
+		wp_enqueue_script( 'highcharts-exporting' );
+
+		// canvg is needed for SVG-to-PNG image generation
+		wp_enqueue_script(
+			'canvg',
+			plugins_url( 'm-chart-highcharts-library/components/external/canvg/umd.js' ),
+			[],
+			$this->version
+		);
+
+		wp_enqueue_script(
+			'm-chart-highcharts-admin',
+			$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
+			[ 'highcharts', 'wp-hooks', 'canvg' ],
+			$this->version
+		);
+
+		// Pass Highcharts lang settings to JS
+		$settings = m_chart()->get_settings();
+
+		if ( ! empty( $settings['lang_settings'] ) ) {
+			wp_add_inline_script(
+				'highcharts',
+				'Highcharts.setOptions(' . wp_json_encode( array( 'lang' => $settings['lang_settings'] ) ) . ');',
+				'after'
 			);
 		}
 	}
@@ -175,19 +205,19 @@ class M_Chart_Highcharts_Library {
 	}
 
 	/**
-	 * Returns the correct template for displaying a Highcharts chart settings
+	 * Hook to the m_chart_react_admin_support filter and indicate that Highcharts supports the React admin UI
 	 *
-	 * @param string the path to the chart settings template
-	 * @param string the library of the current chart
+	 * @param string $supports_react yes/no whether the library supports the React admin
+	 * @param string $library the library in question
 	 *
-	 * @return string the path to the chart settings for this library
+	 * @return string yes/no whether the library supports the React admin
 	 */
-	public function m_chart_settings_template( $template, $library ) {
+	public function m_chart_react_admin_support( $supports_react, $library ) {
 		if ( $library != $this->library ) {
-			return $template;
+			return $supports_react;
 		}
 
-		return __DIR__ . '/templates/highcharts-settings.php';
+		return 'yes';
 	}
 
 	/**

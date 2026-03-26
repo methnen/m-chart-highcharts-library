@@ -31,6 +31,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ## Changelog ##
 
+### 1.3 ###
+
+* Changes to support M Chart 2.0
+* Refactored Highcharts template to no longer be reliant on jQuery
+* Moved canvg from M Chart since nothing in the core plugin needs it anymore
+
 ### 1.2.4 ###
 
 * Tweaks to support M Chart 1.12

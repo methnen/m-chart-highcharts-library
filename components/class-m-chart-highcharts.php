@@ -142,7 +142,7 @@ class M_Chart_Highcharts {
 		}
 
 		// Run the parse class on the data
-		m_chart()->parse()->parse_data( $this->post_meta['data']['sets'][0], $this->post_meta['parse_in'] );
+		$parse = m_chart()->parse()->parse_data( $this->post_meta['data']['sets'][0], $this->post_meta['parse_in'] );
 
 		$chart_args = array(
 			'chart' => array(
@@ -244,13 +244,34 @@ class M_Chart_Highcharts {
 		$chart_args = $this->add_axis_labels( $chart_args );
 		$chart_args = $this->add_data_sets( $chart_args );
 
-		// Add prefix/suffix if appropriate
-		if ( '' != m_chart()->parse()->data_prefix ) {
-			$chart_args['tooltip']['valuePrefix'] = m_chart()->parse()->data_prefix;
+		// Extract prefix/suffix from the parsed raw data points
+		$data_prefix = '';
+		$data_suffix = '';
+
+		foreach ( (array) $parse->raw_data as $raw_point ) {
+			// raw_data can be 2D (array of arrays) depending on label positioning
+			if ( is_array( $raw_point ) ) {
+				foreach ( $raw_point as $inner_point ) {
+					if ( $inner_point && $inner_point->is_numeric() ) {
+						$data_prefix = $inner_point->prefix;
+						$data_suffix = $inner_point->suffix;
+						break 2;
+					}
+				}
+			} elseif ( $raw_point && $raw_point->is_numeric() ) {
+				$data_prefix = $raw_point->prefix;
+				$data_suffix = $raw_point->suffix;
+				break;
+			}
 		}
 
-		if ( '' != m_chart()->parse()->data_suffix ) {
-			$chart_args['tooltip']['valueSuffix'] = m_chart()->parse()->data_suffix;
+		// Add prefix/suffix if appropriate
+		if ( '' != $data_prefix ) {
+			$chart_args['tooltip']['valuePrefix'] = $data_prefix;
+		}
+
+		if ( '' != $data_suffix ) {
+			$chart_args['tooltip']['valueSuffix'] = $data_suffix;
 		}
 
 		if ( 'scatter' == $this->post_meta['type'] ) {
@@ -262,7 +283,7 @@ class M_Chart_Highcharts {
 		}
 
 		if (
-			'both' == m_chart()->parse()->value_labels_position
+			M_Chart_Parse::LABELS_BOTH == $parse->value_labels_position
 			&& (
 				   'scatter' == $this->post_meta['type']
 				|| 'bubble' == $this->post_meta['type']
@@ -270,7 +291,7 @@ class M_Chart_Highcharts {
 		) {
 			$chart_args['plotOptions']['series']['dataLabels']['format'] = '{point.name}';
 		} else {
-			$chart_args['plotOptions']['series']['dataLabels']['format'] = m_chart()->parse()->data_prefix . '{y:,f}' . m_chart()->parse()->data_suffix;
+			$chart_args['plotOptions']['series']['dataLabels']['format'] = $data_prefix . '{y:,f}' . $data_suffix;
 		}
 
 		if ( $this->post_meta['shared'] ) {
@@ -322,8 +343,8 @@ class M_Chart_Highcharts {
 	public function get_value_labels_array() {
 		$value_labels = m_chart()->parse()->value_labels;
 
-		if ( isset( $value_labels['first_column'] ) ) {
-			$label_key = 'rows' == $this->post_meta['parse_in'] ? 'first_row' : 'first_column';
+		if ( isset( $value_labels[ M_Chart_Parse::LABELS_FIRST_COLUMN ] ) ) {
+			$label_key = M_Chart_Parse::PARSE_ROWS == $this->post_meta['parse_in'] ? M_Chart_Parse::LABELS_FIRST_ROW : M_Chart_Parse::LABELS_FIRST_COLUMN;
 
 			return $value_labels[ $label_key ];
 		}
@@ -384,7 +405,7 @@ class M_Chart_Highcharts {
 		if (
 			   'pie' == $this->post_meta['type']
 			|| 'doughnut' == $this->post_meta['type']
-			|| 'both' != m_chart()->parse()->value_labels_position
+			|| M_Chart_Parse::LABELS_BOTH != m_chart()->parse()->value_labels_position
 			&& (
 				   'scatter' != $this->post_meta['type']
 				&& 'bubble' != $this->post_meta['type']
@@ -451,9 +472,9 @@ class M_Chart_Highcharts {
 
 				$new_data_array = array();
 
-				$label_key = ( $this->post_meta['parse_in'] == 'rows' ) ? 'first_column' : 'first_row';
+				$label_key = ( M_Chart_Parse::PARSE_ROWS == $this->post_meta['parse_in'] ) ? M_Chart_Parse::LABELS_FIRST_COLUMN : M_Chart_Parse::LABELS_FIRST_ROW;
 
-				if ( 'both' == $parse->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == $parse->value_labels_position ) {
 					foreach ( $data_array as $data_key => $data ) {
 						$new_data_array[] = array(
 							'x'    => $data[0],
@@ -483,14 +504,14 @@ class M_Chart_Highcharts {
 			// When there's only one data set the header is redundent
 			if ( 1 == count( $this->post_meta['data']['sets'] ) ) {
 				// When there's only one data set the default header is redundent and doesn't include the point label
-				if ( 'both' == m_chart()->parse()->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == m_chart()->parse()->value_labels_position ) {
 					$chart_args['tooltip']['headerFormat'] = "<span style='font-size: 10px;'>{point.key}</span><br/>";
 				} else {
 					$chart_args['tooltip']['headerFormat'] = '';
 				}
 			} else {
 				// When there's more than one data set the default header doesn't include the point label
-				if ( 'both' == m_chart()->parse()->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == m_chart()->parse()->value_labels_position ) {
 					$chart_args['tooltip']['headerFormat'] = "<span style='font-size: 10px;'>{series.name}: {point.key}</span><br/>";
 				} else {
 					$chart_args['tooltip']['headerFormat'] =  "<span style='font-size: 10px;'>{series.name}</span><br/>";
@@ -506,9 +527,9 @@ class M_Chart_Highcharts {
 
 				$new_data_array = array();
 
-				$label_key = ( $this->post_meta['parse_in'] == 'rows' ) ? 'first_column' : 'first_row';
+				$label_key = ( M_Chart_Parse::PARSE_ROWS == $this->post_meta['parse_in'] ) ? M_Chart_Parse::LABELS_FIRST_COLUMN : M_Chart_Parse::LABELS_FIRST_ROW;
 
-				if ( 'both' == $parse->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == $parse->value_labels_position ) {
 					foreach ( $data_array as $data_key => $data ) {
 						$new_data_array[] = array(
 							'x'    => $data[0],
@@ -539,14 +560,14 @@ class M_Chart_Highcharts {
 
 			if ( 1 == count( $this->post_meta['data']['sets'] ) ) {
 				// When there's only one data set the default header is redundent and doesn't include the point label
-				if ( 'both' == m_chart()->parse()->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == m_chart()->parse()->value_labels_position ) {
 					$chart_args['tooltip']['headerFormat'] = "<span style='font-size: 10px;'>{point.key}</span><br/>";
 				} else {
 					$chart_args['tooltip']['headerFormat'] = '';
 				}
 			} else {
 				// When there's more than one data set the default header doesn't include the point label
-				if ( 'both' == m_chart()->parse()->value_labels_position ) {
+				if ( M_Chart_Parse::LABELS_BOTH == m_chart()->parse()->value_labels_position ) {
 					$chart_args['tooltip']['headerFormat'] = "<span style='font-size: 10px;'>{series.name}: {point.key}</span><br/>";
 				} else {
 					$chart_args['tooltip']['headerFormat'] =  "<span style='font-size: 10px;'>{series.name}</span><br/>";
@@ -555,7 +576,7 @@ class M_Chart_Highcharts {
 		} else {
 			$set_data = array();
 
-			$label_key = ( $this->post_meta['parse_in'] == 'rows' ) ? 'first_column' : 'first_row';
+			$label_key = ( M_Chart_Parse::PARSE_ROWS == $this->post_meta['parse_in'] ) ? M_Chart_Parse::LABELS_FIRST_COLUMN : M_Chart_Parse::LABELS_FIRST_ROW;
 
 			foreach ( $data_array as $key => $data_chunk ) {
 				$set_data[ $key ] = array(
