@@ -16,7 +16,7 @@
 	/**
 	 * Safari does not always fire the "C" keydown event for Cmd+C when the active element is a non-editable div
 	 * Jspreadsheet depends on that keydown to trigger its internal copy() function, so the clipboard ends up empty
-	 * The native copy event still fires, however, sowe handle it here
+	 * The native copy event still fires, however, so we handle it here on that event instead
 	 * Extract the selected cell data and write it to the  clipboard via the modern clipboardData API
 	 */
 	document.addEventListener( 'copy', function( e ) {
@@ -73,13 +73,11 @@
 	/**
 	 * Generate a PNG image from a Highcharts chart instance
 	 *
-	 * Uses getSVG() to get a scaled SVG, renders it to a canvas via canvg,
-	 * and writes the base64 PNG to the hidden form field.
+	 * Uses getSVG() to get a scaled SVG, renders it to a canvas via canvg
+	 * Then writes the base64 PNG to the hidden form field
 	 *
-	 * Important: Highcharts' getSVG() internally creates a temporary chart
-	 * using `new this.constructor(opts, this.callback)`, which re-fires our
-	 * render callback. The `isGeneratingImage` flag prevents that from
-	 * recursing back into generateImage and creating an infinite loop.
+	 * Highcharts' getSVG() internally creates a temporary chart using `new this.constructor(opts, this.callback)`
+	 * This re-fires our render callback which `isGeneratingImage` flag prevents
 	 *
 	 * @param {Object}   chart      Highcharts chart instance
 	 * @param {Function} callback   Called when image generation is complete
@@ -161,12 +159,10 @@
 	/**
 	 * Hook into m_chart.render_chart to render Highcharts instead of Chart.js
 	 *
-	 * Highcharts renders to a div, not a canvas, so we hide the canvas and
-	 * render into a dedicated child div inside the wrapper.
+	 * Highcharts renders to a div, not a canvas, so we hide the canvas and render into a dedicated child div inside the wrapper
 	 *
-	 * We must NOT render directly into canvas.parentNode because Highcharts
-	 * clears the container's innerHTML on both init and destroy, which would
-	 * remove the React-managed canvas from the DOM.
+	 * We must NOT render directly into canvas.parentNode because Highcharts clears the container's innerHTML on both init and destroy
+	 * This would remove the React-managed canvas from the DOM
 	 *
 	 * Image generation happens in the Highcharts render callback, BEFORE
 	 * onComplete is called, so the image is ready when the form is enabled.
@@ -198,8 +194,7 @@
 		}
 
 		// Render Highcharts chart
-		// Image generation runs in the callback before onComplete fires,
-		// ensuring the image is ready when the React UI enables the form.
+		// Image generation runs in the callback before onComplete fires, ensuring the image is ready when the React UI enables the form
 		var chart = Highcharts.chart( container, chartArgs, function() {
 			var chartInstance = this;
 
