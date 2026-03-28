@@ -1,7 +1,7 @@
 /**
  * M Chart Highcharts Admin
  *
- * Integrates Highcharts rendering with the M Chart React admin UI via wp.hooks.
+ * Integrates Highcharts rendering with the M Chart React admin UI via wp.hooks
  */
 ( function() {
 	'use strict';
@@ -12,6 +12,63 @@
 
 	var hooks      = window.wp.hooks;
 	var Highcharts = window.Highcharts;
+
+	/**
+	 * Safari does not always fire the "C" keydown event for Cmd+C when the active element is a non-editable div
+	 * Jspreadsheet depends on that keydown to trigger its internal copy() function, so the clipboard ends up empty
+	 * The native copy event still fires, however, sowe handle it here
+	 * Extract the selected cell data and write it to the  clipboard via the modern clipboardData API
+	 */
+	document.addEventListener( 'copy', function( e ) {
+		var jss = window.jspreadsheet;
+
+		if ( ! jss || ! jss.current || ! jss.current.selectedCell ) {
+			return;
+		}
+
+		var ws = jss.current;
+
+		// If jspreadsheet already populated the textarea (C keydown fired normally), let the default behaviour handle it
+		if ( ws.textarea && ws.textarea.value ) {
+			return;
+		}
+
+		var sel = ws.selectedCell;
+		var x1 = Math.min( parseInt( sel[ 0 ], 10 ), parseInt( sel[ 2 ], 10 ) );
+		var y1 = Math.min( parseInt( sel[ 1 ], 10 ), parseInt( sel[ 3 ], 10 ) );
+		var x2 = Math.max( parseInt( sel[ 0 ], 10 ), parseInt( sel[ 2 ], 10 ) );
+		var y2 = Math.max( parseInt( sel[ 1 ], 10 ), parseInt( sel[ 3 ], 10 ) );
+
+		var rows = [];
+
+		for ( var y = y1; y <= y2; y++ ) {
+			var row = [];
+
+			for ( var x = x1; x <= x2; x++ ) {
+				var val = ws.options.data[ y ] && ws.options.data[ y ][ x ];
+
+				if ( val === null || val === undefined ) {
+					val = '';
+				}
+
+				// Quote values containing tabs, newlines, or double-quotes
+				if ( typeof val === 'string' && ( /[\t\n\r"]/.test( val ) ) ) {
+					val = '"' + val.replace( /"/g, '""' ) + '"';
+				}
+
+				row.push( val );
+			}
+
+			rows.push( row.join( '\t' ) );
+		}
+
+		var text = rows.join( '\r\n' );
+
+		if ( text ) {
+			e.clipboardData.setData( 'text/plain', text );
+			e.preventDefault();
+		}
+	}, true );
 
 	/**
 	 * Generate a PNG image from a Highcharts chart instance
