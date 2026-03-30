@@ -18,7 +18,7 @@ This plugin will do nothing useful on it's own and requires [M Chart](https://wo
 
 **Note:** This version is requires [M Chart](https://wordpress.org/plugins/m-chart/) 2.0 or higher.
 
-**Note:** Highcharts is licensed under the CC Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) Creative Commons license. Essenetially this means it's free to use for non commercial purposes. Otherwise it requries you to [purchase a license](https://shop.highcharts.com) from [Highsoft](https://www.highcharts.com/about).
+**Note:** Highcharts is licensed under their own [Commercial](https://shop.highcharts.com)/[Non Commercial](https://shop.highcharts.com/contact/personal) license. Essenetially this means it's free to use for non commercial purposes if approved by them. Otherwise it requries you to [purchase a license](https://shop.highsoft.com/highcharts) from them.
 
 For full documentation please see the [Wiki](https://github.com/methnen/m-chart/wiki).
 

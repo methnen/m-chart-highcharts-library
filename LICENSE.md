@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2015-2026 Jamie Poitra
+Copyright (c) 2015-2026g Jamie Poitra
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,4 +24,4 @@ License info for libraries found in `components/external`:
 - [canvg](https://github.com/gabelerner/canvg/)
 	- License at the time of writing: MIT
 - [highcharts](https://github.com/highslide-software/highcharts.com)
-	- License at the time of writing: CC Attribution-NonCommercial 3.0 Unported
+	- License at the time of writing: [Commercial](https://shop.highcharts.com)/[Non Commercial](https://shop.highcharts.com/contact/personal)
