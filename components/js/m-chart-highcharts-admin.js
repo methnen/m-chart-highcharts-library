@@ -157,6 +157,67 @@
 	}
 
 	/**
+	 * Full settings panel for Highcharts charts.
+	 *
+	 * Rendered inside ChartAdminProvider so window.m_chart.useChartAdmin() is available.
+	 * Reuses the shared row components exposed by the parent plugin and adds
+	 * the Highcharts-specific Source and Source URL fields between AxisRows and
+	 * ShortcodeAndImageRow.
+	 */
+	function HighchartsSettings() {
+		var el       = window.wp.element.createElement;
+		var Fragment = window.wp.element.Fragment;
+		var _ctx     = window.m_chart.useChartAdmin();
+		var postMeta = _ctx.state.postMeta;
+		var dispatch = _ctx.dispatch;
+
+		function handleChange( field, value ) {
+			dispatch( { type: 'SET_POST_META', payload: { [ field ]: value } } );
+		}
+
+		return el( Fragment, null,
+			el( window.m_chart.TypeAndThemeRow, null ),
+			el( window.m_chart.ParseAndFlagsRow, null ),
+			el( window.m_chart.AxisRows, null ),
+			el( 'div', { className: 'row six' },
+				el( 'p', null,
+					el( 'label', { htmlFor: 'm-chart-source' }, 'Source' ),
+					el( 'br', null ),
+					el( 'input', {
+						className:   'input',
+						type:        'text',
+						name:        'm-chart[source]',
+						id:          'm-chart-source',
+						value:       postMeta.source || '',
+						onChange:    function( e ) { handleChange( 'source', e.target.value ); },
+						style:       { width: '100%' },
+						placeholder: 'Name of the source of this data',
+					} )
+				),
+				el( 'p', null,
+					el( 'label', { htmlFor: 'm-chart-source-url' }, 'Source URL' ),
+					el( 'br', null ),
+					el( 'input', {
+						className:   'input',
+						type:        'text',
+						name:        'm-chart[source_url]',
+						id:          'm-chart-source-url',
+						value:       postMeta.source_url || '',
+						onChange:    function( e ) { handleChange( 'source_url', e.target.value ); },
+						style:       { width: '100%' },
+						placeholder: 'URL to the source of this data',
+					} )
+				)
+			),
+			el( window.m_chart.ShortcodeAndImageRow, null )
+		);
+	}
+
+	hooks.addFilter( 'm_chart.settings_component', 'm-chart-highcharts', function() {
+		return HighchartsSettings;
+	} );
+
+	/**
 	 * Hook into m_chart.render_chart to render Highcharts instead of Chart.js
 	 *
 	 * Highcharts renders to a div, not a canvas, so we hide the canvas and render into a dedicated child div inside the wrapper

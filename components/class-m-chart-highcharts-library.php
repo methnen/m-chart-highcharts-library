@@ -40,42 +40,42 @@ class M_Chart_Highcharts_Library {
 		wp_register_script(
 			'highcharts',
 			$this->plugin_url . '/components/external/highcharts/highcharts.js',
-			array( 'jquery' ),
+			array(),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-more',
 			$this->plugin_url . '/components/external/highcharts/highcharts-more.js',
-			array( 'jquery', 'highcharts' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-exporting',
 			$this->plugin_url . '/components/external/highcharts/exporting.js',
-			array( 'highcharts', 'jquery' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-offline-exporting',
 			$this->plugin_url . '/components/external/highcharts/offline-exporting.js',
-			array( 'highcharts', 'jquery', 'highcharts-exporting' ),
+			array( 'highcharts', 'highcharts-exporting' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-export-data',
 			$this->plugin_url . '/components/external/highcharts/export-data.js',
-			array( 'highcharts', 'jquery', 'highcharts-exporting', 'highcharts-offline-exporting' ),
+			array( 'highcharts', 'highcharts-exporting', 'highcharts-offline-exporting' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-accessibility',
 			$this->plugin_url . '/components/external/highcharts/accessibility.js',
-			array( 'highcharts', 'jquery' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
@@ -323,7 +323,6 @@ class M_Chart_Highcharts_Library {
 	 * @return array $default_settings the modified array of default M Chart settings
 	 */
 	public function m_chart_default_settings( $default_settings ) {
-		//return $default_settings;
 		$default_settings['default_highcharts_theme'] = '_default';
 
 		return $default_settings;
