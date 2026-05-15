@@ -13,6 +13,12 @@
 	var hooks      = window.wp.hooks;
 	var Highcharts = window.Highcharts;
 
+	// Defensive fallback for older m-chart core builds that haven't exposed SourceRow yet
+	// Older parents simply won't render the Source/URL/include_source row, instead of throwing on el( undefined )
+	function NoOpRow() {
+		return null;
+	}
+
 	/**
 	 * Safari does not always fire the "C" keydown event for Cmd+C when the active element is a non-editable div
 	 * Jspreadsheet depends on that keydown to trigger its internal copy() function, so the clipboard ends up empty
@@ -159,56 +165,19 @@
 	/**
 	 * Full settings panel for Highcharts charts.
 	 *
-	 * Rendered inside ChartAdminProvider so window.m_chart.useChartAdmin() is available.
-	 * Reuses the shared row components exposed by the parent plugin and adds
-	 * the Highcharts-specific Source and Source URL fields between AxisRows and
-	 * ShortcodeAndImageRow.
+	 * Reuses the shared row components exposed by the parent plugin so the
+	 * Highcharts form stays in lockstep with the chartjs form's field set.
 	 */
 	function HighchartsSettings() {
-		var el       = window.wp.element.createElement;
-		var Fragment = window.wp.element.Fragment;
-		var _ctx     = window.m_chart.useChartAdmin();
-		var postMeta = _ctx.state.postMeta;
-		var dispatch = _ctx.dispatch;
+		var el = window.wp.element.createElement;
 
-		function handleChange( field, value ) {
-			dispatch( { type: 'SET_POST_META', payload: { [ field ]: value } } );
-		}
-
-		return el( Fragment, null,
+		// Wrapper class scopes highcharts-only CSS overrides (e.g. hiding the
+		// per-data-point color checkbox that Highcharts doesn't consume)
+		return el( 'div', { className: 'm-chart-highcharts-form' },
 			el( window.m_chart.TypeAndThemeRow, null ),
 			el( window.m_chart.ParseAndFlagsRow, null ),
 			el( window.m_chart.AxisRows, null ),
-			el( 'div', { className: 'row six' },
-				el( 'p', null,
-					el( 'label', { htmlFor: 'm-chart-source' }, 'Source' ),
-					el( 'br', null ),
-					el( 'input', {
-						className:   'input',
-						type:        'text',
-						name:        'm-chart[source]',
-						id:          'm-chart-source',
-						value:       postMeta.source || '',
-						onChange:    function( e ) { handleChange( 'source', e.target.value ); },
-						style:       { width: '100%' },
-						placeholder: 'Name of the source of this data',
-					} )
-				),
-				el( 'p', null,
-					el( 'label', { htmlFor: 'm-chart-source-url' }, 'Source URL' ),
-					el( 'br', null ),
-					el( 'input', {
-						className:   'input',
-						type:        'text',
-						name:        'm-chart[source_url]',
-						id:          'm-chart-source-url',
-						value:       postMeta.source_url || '',
-						onChange:    function( e ) { handleChange( 'source_url', e.target.value ); },
-						style:       { width: '100%' },
-						placeholder: 'URL to the source of this data',
-					} )
-				)
-			),
+			el( window.m_chart.SourceRow || NoOpRow, null ),
 			el( window.m_chart.ShortcodeAndImageRow, null )
 		);
 	}

@@ -1,5 +1,14 @@
 // Chart/Settings Styles
 
+// Highcharts doesn't support per-data-point color cycling, so hide the toggle
+// rendered by the shared TypeAndThemeRow. Scope keeps it inert when the active
+// settings_component is chartjs's DefaultSettings.
+.m-chart-highcharts-form {
+	.column.data-point-colors {
+		display: none !important;
+	}
+}
+
 #m-chart {
 	.inside {
 		.settings {

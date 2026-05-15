@@ -23,12 +23,12 @@ class M_Chart_Highcharts_Library {
 
 		add_filter( 'm_chart_get_libraries', array( $this, 'm_chart_get_libraries' ) );
 		add_filter( 'm_chart_chart_template', array( $this, 'm_chart_chart_template' ), 10, 2 );
-		add_filter( 'm_chart_react_admin_support', array( $this, 'm_chart_react_admin_support' ), 10, 2 );
 		add_filter( 'm_chart_image_support', array( $this, 'm_chart_image_support'), 10, 2 );
 		add_filter( 'm_chart_instant_preview_support', array( $this, 'm_chart_instant_preview_support'), 10, 2 );
 		add_filter( 'm_chart_library_class', array( $this, 'm_chart_library_class'), 10, 2 );
 		add_filter( 'm_chart_iframe_scripts', array( $this, 'm_chart_iframe_scripts' ), 10, 2 );
 		add_filter( 'm_chart_default_settings', array( $this, 'm_chart_default_settings' ) );
+		add_filter( 'm_chart_validated_settings', array( $this, 'm_chart_validated_settings' ), 10, 2 );
 		add_filter( 'm_chart_get_post_meta', array( $this, 'm_chart_get_post_meta' ), 10, 3 );
 	}
 
@@ -205,22 +205,6 @@ class M_Chart_Highcharts_Library {
 	}
 
 	/**
-	 * Hook to the m_chart_react_admin_support filter and indicate that Highcharts supports the React admin UI
-	 *
-	 * @param string $supports_react yes/no whether the library supports the React admin
-	 * @param string $library the library in question
-	 *
-	 * @return string yes/no whether the library supports the React admin
-	 */
-	public function m_chart_react_admin_support( $supports_react, $library ) {
-		if ( $library != $this->library ) {
-			return $supports_react;
-		}
-
-		return 'yes';
-	}
-
-	/**
 	 * Hook to the m_chart_image_support filter and indicate that Highcharts supports images
 	 *
 	 * @param string $supports_images yes/no whether the library supports image generation
@@ -324,8 +308,68 @@ class M_Chart_Highcharts_Library {
 	 */
 	public function m_chart_default_settings( $default_settings ) {
 		$default_settings['default_highcharts_theme'] = '_default';
+		$default_settings['lang_settings']            = $this->lang_settings_defaults();
 
 		return $default_settings;
+	}
+
+	/**
+	 * Default values for the Highcharts.lang block of the M Chart settings option
+	 *
+	 * Mirrors Highcharts 10.x's own lang defaults so charts render unchanged when nothing is configured
+	 *
+	 * @return array
+	 */
+	private function lang_settings_defaults() {
+		return array(
+			'decimalPoint'           => '.',
+			'thousandsSep'           => ',',
+			'numericSymbols'         => array( 'k', 'M', 'B', 'T', 'P', 'E' ),
+			'numericSymbolMagnitude' => 1000,
+		);
+	}
+
+	/**
+	 * Hook into m_chart_validated_settings to overlay the nested lang_settings array
+	 *
+	 * Core's settings validator only handles scalar values; for the lang_settings array it would
+	 * call preg_match() on an array (warning) and then drop our submission for the scalar default
+	 * This callback validates each lang_settings field and writes the result back over core's clobber
+	 *
+	 * @param array $validated_settings the settings core has already validated (lang_settings will be a scalar default here)
+	 * @param array $submitted_settings the raw $_POST['m-chart'] payload
+	 *
+	 * @return array $validated_settings with a properly shaped lang_settings array
+	 */
+	public function m_chart_validated_settings( $validated_settings, $submitted_settings ) {
+		// If our block wasn't part of the submission, preserve previously-saved values rather than
+		// reverting to defaults — another library's settings page submission shouldn't wipe ours
+		if ( empty( $submitted_settings['lang_settings'] ) || ! is_array( $submitted_settings['lang_settings'] ) ) {
+			$current = m_chart()->get_settings( 'lang_settings' );
+			$validated_settings['lang_settings'] = is_array( $current ) ? $current : $this->lang_settings_defaults();
+			return $validated_settings;
+		}
+
+		$submitted = $submitted_settings['lang_settings'];
+		$defaults  = $this->lang_settings_defaults();
+
+		// numericSymbols arrives as a comma-separated string from the text input
+		$numeric_symbols = isset( $submitted['numericSymbols'] ) ? $submitted['numericSymbols'] : '';
+
+		if ( is_array( $numeric_symbols ) ) {
+			$symbols = $numeric_symbols;
+		} else {
+			$symbols = array_filter( array_map( 'trim', explode( ',', (string) $numeric_symbols ) ), 'strlen' );
+		}
+
+		$validated_settings['lang_settings'] = array(
+			'decimalPoint'           => isset( $submitted['decimalPoint'] ) ? substr( (string) $submitted['decimalPoint'], 0, 1 ) : $defaults['decimalPoint'],
+			'thousandsSep'           => isset( $submitted['thousandsSep'] ) ? substr( (string) $submitted['thousandsSep'], 0, 1 ) : $defaults['thousandsSep'],
+			'numericSymbols'         => empty( $symbols ) ? $defaults['numericSymbols'] : array_values( array_map( 'sanitize_text_field', $symbols ) ),
+			'numericSymbolMagnitude' => isset( $submitted['numericSymbolMagnitude'] ) ? max( 1, absint( $submitted['numericSymbolMagnitude'] ) ) : $defaults['numericSymbolMagnitude'],
+		);
+
+		return $validated_settings;
 	}
 
 	/**

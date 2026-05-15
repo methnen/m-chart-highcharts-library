@@ -161,8 +161,9 @@ class M_Chart_Highcharts {
 				'enabled' => $this->post_meta['legend'] ? true : false,
 			),
 			'credits' => array(
-				'href' => $this->post_meta['source_url'],
-				'text' => $this->post_meta['source'],
+				'enabled' => ! empty( $this->post_meta['include_source'] ) && '' !== $this->post_meta['source'],
+				'href'    => $this->post_meta['source_url'],
+				'text'    => $this->post_meta['source'],
 			),
 			'exporting' => array(
 				'enabled' => apply_filters( 'm_chart_enable_highcharts_export', false, $post_id, '' ),
@@ -682,6 +683,9 @@ class M_Chart_Highcharts {
 		}
 
 		$themes = apply_filters( 'm_chart_highcharts_available_themes', $themes );
+
+		// Parity with the m_chart_chartjs_themes filter exposed by the chartjs library
+		$themes = apply_filters( 'm_chart_highcharts_themes', $themes );
 
 		// Set the cache, we'll regenerate this when someone visits the settings page
 		wp_cache_set( $cache_key, $themes, m_chart()->slug );
