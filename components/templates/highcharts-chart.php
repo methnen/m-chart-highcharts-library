@@ -3,10 +3,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Inside iframe.php the M_Chart instance has a CSP nonce set; outside (front-end / admin preview) it's empty
+// The inline <script> blocks need a matching nonce ONLY when rendered inside the CSP-protected iframe
+$iframe_nonce      = m_chart()->iframe_csp_nonce ?? '';
+$nonce_attr        = $iframe_nonce ? ' nonce="' . esc_attr( $iframe_nonce ) . '"' : '';
+
 // If there's multiple instances of a chart on the page we don't want to redeclare global Highcharts options
 if ( ! $this->options_set ) {
 	?>
-	<script>
+	<script<?php echo $nonce_attr; ?>>
 	( () => {
 		Highcharts.setOptions( <?php echo $this->unicode_aware_stripslashes( json_encode( $this->library( 'highcharts' )->get_chart_options() ) ); ?> );
 	} )();
@@ -42,10 +47,10 @@ $desc_id      = $chart_id . '-desc';
 ?>
 <figure id="<?php echo esc_attr( $container_id ); ?>" class="m-chart-container highcharts">
 	<div id="<?php echo esc_attr( $chart_id ); ?>" class="m-chart" role="img" aria-labelledby="<?php echo esc_attr( $caption_id ); ?>" aria-describedby="<?php echo esc_attr( $desc_id ); ?>" style="height: <?php echo absint( $height ); ?>px;<?php echo $width ? ' width: ' . absint( $width ) . 'px;' : ''; ?> max-width: 100%;"></div>
-	<figcaption id="<?php echo esc_attr( $caption_id ); ?>" class="screen-reader-text">
+	<figcaption id="<?php echo esc_attr( $caption_id ); ?>" class="screen-reader-text sr-only">
 		<?php echo esc_html( $title ); ?>
 	</figcaption>
-	<div id="<?php echo esc_attr( $desc_id ); ?>" class="screen-reader-text">
+	<div id="<?php echo esc_attr( $desc_id ); ?>" class="screen-reader-text sr-only">
 		<?php
 		// Render the data table(s) as an accessible description for screen-reader users.
 		echo m_chart()->build_table( $post_id );
@@ -60,7 +65,7 @@ $desc_id      = $chart_id . '-desc';
 		?>
 	</div>
 </figure>
-<script>
+<script<?php echo $nonce_attr; ?>>
 	( () => {
 		const postId    = <?php echo absint( $post_id ); ?>;
 		const instance  = <?php echo absint( $this->instance ); ?>;
