@@ -55,14 +55,14 @@ class M_Chart_Highcharts_Library_Update {
 			'plugin' => $this->slug . '/' . $this->slug . '.php',
 			'new_version' => $plugin_data['Version'],
 			'url' => 'https://github.com/' . $this->github_account . '/' . $this->slug,
-			'package' => 'https://github.com/' . $this->github_account . '/' . $this->slug . '/raw/master/plugin.zip',
+			'package' => 'https://github.com/' . $this->github_account . '/' . $this->slug . '/raw/main/plugin.zip',
 			'icons' => array(
-				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-256x256.png',
-				'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/icon-128x128.png',
+				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/icon-256x256.png',
+				'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/icon-128x128.png',
 			),
 			'banners' => array(
-				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-1544x500.png',
-				'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-772x250.png',
+				'2x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/banner-1544x500.png',
+				'1x' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/banner-772x250.png',
 			),
 			'banners_rtl' => array(),
 			'tested' => $readme_data['tested'],
@@ -117,8 +117,8 @@ class M_Chart_Highcharts_Library_Update {
 			'sections'       => $readme_data['sections'],
 			'tags'           => $tags,
 			'banners' => array(
-				'high' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-1544x500.png',
-				'low' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/master/assets/banner-772x250.png',
+				'high' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/banner-1544x500.png',
+				'low' => 'https://raw.githubusercontent.com/' . $this->github_account . '/' . $this->slug . '/main/assets/banner-772x250.png',
 			),
 	    );
 
@@ -132,7 +132,7 @@ class M_Chart_Highcharts_Library_Update {
 	 */
 	public function get_plugin_data() {
 		if ( ! $this->plugin_request ) {
-			// Retrieve the base plugin file from the GitHub master
+			// Retrieve the base plugin file from the GitHub main
 			$api_url = 'https://api.github.com/repos/' . $this->github_account . '/' . $this->slug . '/contents/' . $this->slug . '.php';
 
 			$args = array(
@@ -167,7 +167,7 @@ class M_Chart_Highcharts_Library_Update {
 	 */
 	public function get_readme_data() {
 		if ( ! $this->readme_request ) {
-			// Retrieve the readme.txt file from the GitHub master
+			// Retrieve the readme.txt file from the GitHub main
 			$api_url = 'https://api.github.com/repos/' . $this->github_account . '/' . $this->slug . '/contents/README.md';
 
 			$args = array(

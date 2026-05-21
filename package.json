@@ -2,14 +2,19 @@
   "name": "m-chart-highcharts-library",
   "devDependencies": {
     "archiver": "^6.0.0",
+    "chokidar-cli": "^3.0.0",
     "sass": "^1.0.0",
-    "wp-readme-to-markdown": "^1.0.0"
+    "wp-readme-to-markdown": "^1.0.0",
+    "concurrently": "^9.0.0"
   },
   "scripts": {
     "build:css": "sass --source-map --style=expanded components/sass/m-chart-highcharts-library-admin.scss components/css/m-chart-highcharts-library-admin.css",
     "build:readme": "wp-readme-to-md --screenshot-url=https://methnen.com/misc/m-chart/{screenshot}.png",
     "build:zip": "node bin/build-zip.js",
     "build": "npm run build:css && npm run build:readme && npm run build:zip",
-    "watch": "sass --watch components/sass/m-chart-highcharts-library-admin.scss:components/css/m-chart-highcharts-library-admin.css"
+    "watch:css": "sass --watch components/sass/m-chart-highcharts-library-admin.scss:components/css/m-chart-highcharts-library-admin.css",
+    "watch:readme": "chokidar 'readme.txt' -c 'npm run build:readme'",
+    "watch": "concurrently 'npm run watch:css' 'npm run watch:readme'",
+    "postinstall": "npm run build"
   }
 }

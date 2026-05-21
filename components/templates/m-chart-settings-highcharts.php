@@ -21,7 +21,7 @@
 				</select>
 				<p class="description">
 					<?php esc_html_e( 'See the M Chart documentation for more info on how to use themes:', 'm-chart' ); ?>
-					<a href="https://github.com/methnen/m-chart/wiki/Themes">https://github.com/methnen/m-chart/wiki/Themes</a>
+					<a href="https://docs.mch.art/highcharts/themes">https://docs.mch.art/highcharts/themes</a>
 				</p>
 			</td>
 		</tr>

@@ -3,6 +3,10 @@
   background-size: contain;
 }
 
+.m-chart-highcharts-form .column.data-point-colors {
+  display: none !important;
+}
+
 #m-chart .inside .settings .row.one p {
   float: left;
   margin-left: 1%;

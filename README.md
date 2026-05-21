@@ -3,7 +3,7 @@
 **Tags:** highcharts, graphs, charts, data, wordpress  
 **Requires at least:** 4.2  
 **Tested up to:** 5.9  
-**Stable tag:** 1.2.4  
+**Stable tag:** 1.3  
 **License:** MIT  
 
 Adds the Highcharts library to M Chart.
@@ -16,9 +16,11 @@ This plugin will do nothing useful on it's own and requires [M Chart](https://wo
 
 **Please download from this URL: [M Chart Highcharts Library](https://github.com/methnen/m-chart-highcharts-library/raw/master/plugin.zip)**
 
-**Note:** Highcharts is licensed under the CC Attribution-NonCommercial 3.0 Unported (CC BY-NC 3.0) Creative Commons license. Essenetially this means it's free to use for non commercial purposes. Otherwise it requries you to [purchase a license](https://shop.highcharts.com) from [Highsoft](https://www.highcharts.com/about).
+**Note:** This version is requires [M Chart](https://wordpress.org/plugins/m-chart/) 2.0 or higher.
 
-For full documentation please see the [Wiki](https://github.com/methnen/m-chart/wiki).
+**Note:** Highcharts is licensed under their own [Commercial](https://shop.highcharts.com)/[Non Commercial](https://shop.highcharts.com/contact/personal) license. Essenetially this means it's free to use for non commercial purposes if approved by them. Otherwise it requries you to [purchase a license](https://shop.highsoft.com/highcharts) from them.
+
+For full documentation please see the [Documentation](https://docs.mch.art/).
 
 To contribute, report issues, or make feature requests use [Github](https://github.com/methnen/m-chart-highcharts/).
 
@@ -31,6 +33,12 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ## Changelog ##
 
+### 1.3 ###
+
+* Changes to support M Chart 2.0 and 2.1
+* Refactored Highcharts template to no longer be reliant on jQuery
+* Moved canvg from M Chart since nothing in the core plugin needs it anymore
+
 ### 1.2.4 ###
 
 * Tweaks to support M Chart 1.12
@@ -40,9 +48,9 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 ### 1.2.3 ###
 
 * Added support for image width setting in M Chart 1.9.4
-* Added ability to modify the list of [available Highcharts themes](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_highcharts_available_themes)
+* Added ability to modify the list of [available Highcharts themes](https://docs.mch.art/highcharts/hooks)
 * Added caching of Highcharts theme lookup (refreshed when visiting settings page)
-* Added ability to enable the [accessibility](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_accessibility) and [export](https://github.com/methnen/m-chart/wiki/Action-and-filter-hooks#m_chart_enable_highcharts_export) modules for Highcharts
+* Added ability to enable the [accessibility](https://docs.mch.art/highcharts/hooks) and [export](https://docs.mch.art/highcharts/hooks) modules for Highcharts
 * Image generation now always waits for the canvas to be ready before generation the PNG
 * Updated Highcharts to the latest stable version (10.0.0)
 
@@ -56,7 +64,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ### 1.2 ###
 
-* Added support for [stacked column](https://github.com/methnen/m-chart/wiki/Types-of-charts#stacked-column), [stacked bar](https://github.com/methnen/m-chart/wiki/Types-of-charts#stacked-bar), and [doughnut](https://github.com/methnen/m-chart/wiki/Types-of-charts#doughnut) charts
+* Added support for [stacked column](https://docs.mch.art/guide/chart-types), [stacked bar](https://docs.mch.art/guide/chart-types), and [doughnut](https://docs.mch.art/guide/chart-types) charts
 * Updated how settings are handled to support changes in M Chart 1.9
 * Updated Highcharts to the latest stable version (9.3.2)
 
@@ -66,7 +74,7 @@ To contribute, report issues, or make feature requests use [Github](https://gith
 
 ### 1.1 ###
 
-* Added support for [radar](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar), [radar area](https://github.com/methnen/m-chart/wiki/Types-of-charts#radar-area), and [polar](https://github.com/methnen/m-chart/wiki/Types-of-charts#polar) charts
+* Added support for [radar](https://docs.mch.art/guide/chart-types), [radar area](https://docs.mch.art/guide/chart-types), and [polar](https://docs.mch.art/guide/chart-types) charts
 * Added support for the Image Multiplier setting
 * Updated image generation code to use canvg 3.0.7
 * Updated Highcharts to the latest stable version (9.1.0)

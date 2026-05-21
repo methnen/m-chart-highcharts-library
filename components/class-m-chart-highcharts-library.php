@@ -1,7 +1,7 @@
 <?php
 
 class M_Chart_Highcharts_Library {
-	public $version = '1.2.4';
+	public $version = '1.3';
 	public $plugin_url;
 	public $library = 'highcharts';
 	public $library_name = 'Highcharts';
@@ -19,15 +19,16 @@ class M_Chart_Highcharts_Library {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_action( 'm_chart_settings_admin', array( $this, 'm_chart_settings_admin' ) );
+		add_action( 'm_chart_admin_scripts', array( $this, 'm_chart_admin_scripts' ), 10, 2 );
 
 		add_filter( 'm_chart_get_libraries', array( $this, 'm_chart_get_libraries' ) );
 		add_filter( 'm_chart_chart_template', array( $this, 'm_chart_chart_template' ), 10, 2 );
-		add_filter( 'm_chart_settings_template', array( $this, 'm_chart_settings_template' ), 10, 2 );
 		add_filter( 'm_chart_image_support', array( $this, 'm_chart_image_support'), 10, 2 );
 		add_filter( 'm_chart_instant_preview_support', array( $this, 'm_chart_instant_preview_support'), 10, 2 );
 		add_filter( 'm_chart_library_class', array( $this, 'm_chart_library_class'), 10, 2 );
 		add_filter( 'm_chart_iframe_scripts', array( $this, 'm_chart_iframe_scripts' ), 10, 2 );
 		add_filter( 'm_chart_default_settings', array( $this, 'm_chart_default_settings' ) );
+		add_filter( 'm_chart_validated_settings', array( $this, 'm_chart_validated_settings' ), 10, 2 );
 		add_filter( 'm_chart_get_post_meta', array( $this, 'm_chart_get_post_meta' ), 10, 3 );
 	}
 
@@ -39,42 +40,42 @@ class M_Chart_Highcharts_Library {
 		wp_register_script(
 			'highcharts',
 			$this->plugin_url . '/components/external/highcharts/highcharts.js',
-			array( 'jquery' ),
+			array(),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-more',
 			$this->plugin_url . '/components/external/highcharts/highcharts-more.js',
-			array( 'jquery', 'highcharts' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-exporting',
 			$this->plugin_url . '/components/external/highcharts/exporting.js',
-			array( 'highcharts', 'jquery' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-offline-exporting',
 			$this->plugin_url . '/components/external/highcharts/offline-exporting.js',
-			array( 'highcharts', 'jquery', 'highcharts-exporting' ),
+			array( 'highcharts', 'highcharts-exporting' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-export-data',
 			$this->plugin_url . '/components/external/highcharts/export-data.js',
-			array( 'highcharts', 'jquery', 'highcharts-exporting', 'highcharts-offline-exporting' ),
+			array( 'highcharts', 'highcharts-exporting', 'highcharts-offline-exporting' ),
 			$this->version
 		);
 
 		wp_register_script(
 			'highcharts-accessibility',
 			$this->plugin_url . '/components/external/highcharts/accessibility.js',
-			array( 'highcharts', 'jquery' ),
+			array( 'highcharts' ),
 			$this->version
 		);
 
@@ -95,7 +96,7 @@ class M_Chart_Highcharts_Library {
 	}
 
 	/**
-	 * Load CSS/Javascript necessary for the interface
+	 * Load CSS necessary for the interface
 	 *
 	 * @param object the current screen object as passed by the current_screen action hook
 	 */
@@ -123,16 +124,45 @@ class M_Chart_Highcharts_Library {
 				$this->version
 			);
 		}
+	}
 
-		if ( 'post' == $screen->base && 'highcharts' == $library ) {
-			// Highcharts export.js is required for the image generation
-			wp_enqueue_script( 'highcharts-exporting' );
+	/**
+	 * Enqueue Highcharts admin scripts when on a Highcharts chart edit page
+	 *
+	 * @param string $library the active library
+	 * @param int $post_id WP post ID of the chart being edited
+	 */
+	public function m_chart_admin_scripts( $library, $post_id ) {
+		if ( $library != $this->library ) {
+			return;
+		}
 
-			wp_enqueue_script(
-				'm-chart-highcharts-admin',
-				$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
-				array( 'm-chart-admin', 'highcharts', 'jquery' ),
-				$this->version
+		// Highcharts export.js is required for the image generation
+		wp_enqueue_script( 'highcharts-exporting' );
+
+		// canvg is needed for SVG-to-PNG image generation
+		wp_enqueue_script(
+			'canvg',
+			plugins_url( 'm-chart-highcharts-library/components/external/canvg/umd.js' ),
+			[],
+			$this->version
+		);
+
+		wp_enqueue_script(
+			'm-chart-highcharts-admin',
+			$this->plugin_url . '/components/js/m-chart-highcharts-admin.js',
+			[ 'highcharts', 'wp-hooks', 'canvg' ],
+			$this->version
+		);
+
+		// Pass Highcharts lang settings to JS
+		$settings = m_chart()->get_settings();
+
+		if ( ! empty( $settings['lang_settings'] ) ) {
+			wp_add_inline_script(
+				'highcharts',
+				'Highcharts.setOptions(' . wp_json_encode( array( 'lang' => $settings['lang_settings'] ) ) . ');',
+				'after'
 			);
 		}
 	}
@@ -172,22 +202,6 @@ class M_Chart_Highcharts_Library {
 		}
 
 		return __DIR__ . '/templates/highcharts-chart.php';
-	}
-
-	/**
-	 * Returns the correct template for displaying a Highcharts chart settings
-	 *
-	 * @param string the path to the chart settings template
-	 * @param string the library of the current chart
-	 *
-	 * @return string the path to the chart settings for this library
-	 */
-	public function m_chart_settings_template( $template, $library ) {
-		if ( $library != $this->library ) {
-			return $template;
-		}
-
-		return __DIR__ . '/templates/highcharts-settings.php';
 	}
 
 	/**
@@ -293,10 +307,69 @@ class M_Chart_Highcharts_Library {
 	 * @return array $default_settings the modified array of default M Chart settings
 	 */
 	public function m_chart_default_settings( $default_settings ) {
-		//return $default_settings;
 		$default_settings['default_highcharts_theme'] = '_default';
+		$default_settings['lang_settings']            = $this->lang_settings_defaults();
 
 		return $default_settings;
+	}
+
+	/**
+	 * Default values for the Highcharts.lang block of the M Chart settings option
+	 *
+	 * Mirrors Highcharts 10.x's own lang defaults so charts render unchanged when nothing is configured
+	 *
+	 * @return array
+	 */
+	private function lang_settings_defaults() {
+		return array(
+			'decimalPoint'           => '.',
+			'thousandsSep'           => ',',
+			'numericSymbols'         => array( 'k', 'M', 'B', 'T', 'P', 'E' ),
+			'numericSymbolMagnitude' => 1000,
+		);
+	}
+
+	/**
+	 * Hook into m_chart_validated_settings to overlay the nested lang_settings array
+	 *
+	 * Core's settings validator only handles scalar values; for the lang_settings array it would
+	 * call preg_match() on an array (warning) and then drop our submission for the scalar default
+	 * This callback validates each lang_settings field and writes the result back over core's clobber
+	 *
+	 * @param array $validated_settings the settings core has already validated (lang_settings will be a scalar default here)
+	 * @param array $submitted_settings the raw $_POST['m-chart'] payload
+	 *
+	 * @return array $validated_settings with a properly shaped lang_settings array
+	 */
+	public function m_chart_validated_settings( $validated_settings, $submitted_settings ) {
+		// If our block wasn't part of the submission, preserve previously-saved values rather than
+		// reverting to defaults — another library's settings page submission shouldn't wipe ours
+		if ( empty( $submitted_settings['lang_settings'] ) || ! is_array( $submitted_settings['lang_settings'] ) ) {
+			$current = m_chart()->get_settings( 'lang_settings' );
+			$validated_settings['lang_settings'] = is_array( $current ) ? $current : $this->lang_settings_defaults();
+			return $validated_settings;
+		}
+
+		$submitted = $submitted_settings['lang_settings'];
+		$defaults  = $this->lang_settings_defaults();
+
+		// numericSymbols arrives as a comma-separated string from the text input
+		$numeric_symbols = isset( $submitted['numericSymbols'] ) ? $submitted['numericSymbols'] : '';
+
+		if ( is_array( $numeric_symbols ) ) {
+			$symbols = $numeric_symbols;
+		} else {
+			$symbols = array_filter( array_map( 'trim', explode( ',', (string) $numeric_symbols ) ), 'strlen' );
+		}
+
+		$validated_settings['lang_settings'] = array(
+			'decimalPoint'           => isset( $submitted['decimalPoint'] ) ? substr( (string) $submitted['decimalPoint'], 0, 1 ) : $defaults['decimalPoint'],
+			'thousandsSep'           => isset( $submitted['thousandsSep'] ) ? substr( (string) $submitted['thousandsSep'], 0, 1 ) : $defaults['thousandsSep'],
+			'numericSymbols'         => empty( $symbols ) ? $defaults['numericSymbols'] : array_values( array_map( 'sanitize_text_field', $symbols ) ),
+			'numericSymbolMagnitude' => isset( $submitted['numericSymbolMagnitude'] ) ? max( 1, absint( $submitted['numericSymbolMagnitude'] ) ) : $defaults['numericSymbolMagnitude'],
+		);
+
+		return $validated_settings;
 	}
 
 	/**

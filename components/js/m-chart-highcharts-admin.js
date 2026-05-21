@@ -1,139 +1,238 @@
-var m_chart_highcharts_admin = {};
-
-(function( $ ) {
+/**
+ * M Chart Highcharts Admin
+ *
+ * Integrates Highcharts rendering with the M Chart React admin UI via wp.hooks
+ */
+( function() {
 	'use strict';
 
-	// Start things up
-	m_chart_highcharts_admin.init = function() {
-		// Only show fields/inputs that are appropriate for the current chart type
-		var $chart_type_select = $( document.getElementById( 'm-chart-type' ) );
-		$chart_type_select.on( 'load, change', this.handle_chart_type );
-		$chart_type_select.trigger( 'change' );
+	if ( ! window.wp || ! window.wp.hooks || ! window.Highcharts ) {
+		return;
+	}
 
-		// Watch for a new chart to be built
-		if ( 'default' === m_chart_admin.performance && 'yes' === m_chart_admin.image_support ) {
-			$( '.m-chart' ).on( 'render_done', this.generate_image_from_chart );
+	var hooks      = window.wp.hooks;
+	var Highcharts = window.Highcharts;
+
+	// Defensive fallback for older m-chart core builds that haven't exposed SourceRow yet
+	// Older parents simply won't render the Source/URL/include_source row, instead of throwing on el( undefined )
+	function NoOpRow() {
+		return null;
+	}
+
+	/**
+	 * Safari does not always fire the "C" keydown event for Cmd+C when the active element is a non-editable div
+	 * Jspreadsheet depends on that keydown to trigger its internal copy() function, so the clipboard ends up empty
+	 * The native copy event still fires, however, so we handle it here on that event instead
+	 * Extract the selected cell data and write it to the  clipboard via the modern clipboardData API
+	 */
+	document.addEventListener( 'copy', function( e ) {
+		var jss = window.jspreadsheet;
+
+		if ( ! jss || ! jss.current || ! jss.current.selectedCell ) {
+			return;
 		}
 
-		$( '.m-chart' ).on( 'chart_args_success', this.refresh_chart );
-	};
+		var ws = jss.current;
 
-	// Handle chart type input changes so the settings UI only reflects appropriate options
-	m_chart_highcharts_admin.handle_chart_type = function( event ) {
-		var chart_type        = $( this ).val();
-		var $chart_meta_box   = $( document.getElementById( 'm-chart' ) );
-		var $spreadsheet_tabs = $( document.getElementById( 'spreadsheet-tabs' ) );
-
-		// Show everything before hiding the options we don't want
-		$chart_meta_box.find( '.row, .shared' ).removeClass( 'hide' );
-		$chart_meta_box.find( '.row.two' ).addClass( 'show-shared' );
-
-		if (
-			   'area' === chart_type
-			|| 'column' === chart_type
-			|| 'stacked-column' === chart_type
-			|| 'bar' === chart_type
-			|| 'stacked-bar' === chart_type
-		) {
-			$spreadsheet_tabs.addClass( 'hide' );
+		// If jspreadsheet already populated the textarea (C keydown fired normally), let the default behaviour handle it
+		if ( ws.textarea && ws.textarea.value ) {
+			return;
 		}
 
-		if (
-			   'column' === chart_type
-			|| 'stacked-column' === chart_type
-			|| 'bar' === chart_type
-			|| 'stacked-bar' === chart_type
-		) {
-			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
-		}
+		var sel = ws.selectedCell;
+		var x1 = Math.min( parseInt( sel[ 0 ], 10 ), parseInt( sel[ 2 ], 10 ) );
+		var y1 = Math.min( parseInt( sel[ 1 ], 10 ), parseInt( sel[ 3 ], 10 ) );
+		var x2 = Math.max( parseInt( sel[ 0 ], 10 ), parseInt( sel[ 2 ], 10 ) );
+		var y2 = Math.max( parseInt( sel[ 1 ], 10 ), parseInt( sel[ 3 ], 10 ) );
 
-		if (
-			   'line' === chart_type
-			|| 'spline' === chart_type
-		) {
-			$spreadsheet_tabs.addClass( 'hide' );
-		}
+		var rows = [];
 
-		if (
-			   'pie' === chart_type
-			|| 'polar' === chart_type
-			|| 'doughnut' === chart_type
-		) {
-			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
-			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
-			$spreadsheet_tabs.addClass( 'hide' );
-		}
+		for ( var y = y1; y <= y2; y++ ) {
+			var row = [];
 
-		if (
-			   'scatter' === chart_type
-			|| 'bubble' === chart_type
-		) {
-			$chart_meta_box.find( '.row.y-min' ).addClass( 'hide' );
-			$chart_meta_box.find( '.row.two' ).removeClass( 'show-shared' );
-			$spreadsheet_tabs.removeClass( 'hide' );
-		}
+			for ( var x = x1; x <= x2; x++ ) {
+				var val = ws.options.data[ y ] && ws.options.data[ y ][ x ];
 
-		if (
-			   'radar' === chart_type
-			|| 'radar-area' === chart_type
-		) {
-			$chart_meta_box.find( '.row.vertical-axis, .row.horizontal-axis, .row.y-min' ).addClass( 'hide' );
-			$spreadsheet_tabs.removeClass( 'hide' );
-		}
-	};
+				if ( val === null || val === undefined ) {
+					val = '';
+				}
 
-	// Generate a PNG image out of a rendered chart
-	m_chart_highcharts_admin.generate_image_from_chart = function( event ) {
-		var svg = event.chart.getSVG({
-			chart: {
-				width: m_chart_admin.image_width
+				// Quote values containing tabs, newlines, or double-quotes
+				if ( typeof val === 'string' && ( /[\t\n\r"]/.test( val ) ) ) {
+					val = '"' + val.replace( /"/g, '""' ) + '"';
+				}
+
+				row.push( val );
 			}
-		});
 
-		var chart_width  = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
-		var chart_height = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1];
-
-		var image_width  = chart_width * m_chart_admin.image_multiplier;
-		var image_height = chart_height * m_chart_admin.image_multiplier;
-
-		// Multiply the width/height values of the SVG
-	    svg = svg.replace( 'width="' + chart_width + '"', 'width="' + image_width + '"' );
-	    svg = svg.replace( 'height="' + chart_height + '"', 'height="' + image_height + '"' );
-
-		let $canvas = document.getElementById( 'm-chart-canvas-render-' + event.post_id );
-
-		this.ctx = $canvas.getContext( '2d' );
-        
-		let v = canvg.Canvg.fromString( this.ctx, svg );
-		
-		let render = v.render();
-		
-		// Wait for the render to finish before we try to make the PNG
-		render.then(function() {
-			$( '.m-chart' ).trigger({
-				type: 'canvas_done'
-			});
-			
-			// Save the image string to the text area so we can save it on update/publish
-			$( document.getElementById( 'm-chart-img' ) ).val( $canvas.toDataURL( 'image/png' ) );
-
-			// Allow form submission now that we've got a valid img value set
-			m_chart_admin.form_submission( true );
-		});
-	};
-
-	// Refresh the chart arguments
-	m_chart_highcharts_admin.refresh_chart = function( event ) {
-		// Update active chart args and then rerender the chart
-		window[ 'm_chart_highcharts_' + m_chart_admin.post_id + '_1' ].chart_args = event.response.data;
-		window[ 'm_chart_highcharts_' + m_chart_admin.post_id + '_1' ].render_chart();
-
-		if ( 'no-images' === m_chart_admin.performance ) {
-			m_chart_admin.form_submission( true );
+			rows.push( row.join( '\t' ) );
 		}
-	};
 
-	$( function() {
-		m_chart_highcharts_admin.init();
+		var text = rows.join( '\r\n' );
+
+		if ( text ) {
+			e.clipboardData.setData( 'text/plain', text );
+			e.preventDefault();
+		}
+	}, true );
+
+	/**
+	 * Generate a PNG image from a Highcharts chart instance
+	 *
+	 * Uses getSVG() to get a scaled SVG, renders it to a canvas via canvg
+	 * Then writes the base64 PNG to the hidden form field
+	 *
+	 * Highcharts' getSVG() internally creates a temporary chart using `new this.constructor(opts, this.callback)`
+	 * This re-fires our render callback which `isGeneratingImage` flag prevents
+	 *
+	 * @param {Object}   chart      Highcharts chart instance
+	 * @param {Function} callback   Called when image generation is complete
+	 */
+	var isGeneratingImage = false;
+
+	function generateImage( chart, callback ) {
+		if ( isGeneratingImage ) {
+			return;
+		}
+
+		if ( ! window.m_chart_admin ) {
+			callback();
+			return;
+		}
+
+		if ( 'default' !== window.m_chart_admin.performance || 'yes' !== window.m_chart_admin.image_support ) {
+			callback();
+			return;
+		}
+
+		if ( ! window.canvg || ! window.canvg.Canvg ) {
+			callback();
+			return;
+		}
+
+		isGeneratingImage = true;
+
+		var imageWidth      = parseInt( window.m_chart_admin.image_width, 10 ) || 800;
+		var imageMultiplier = parseFloat( window.m_chart_admin.image_multiplier ) || 2;
+
+		// Get the SVG at the desired image width
+		var svg = chart.getSVG( {
+			chart: {
+				width: imageWidth,
+			},
+		} );
+
+		// Extract and scale dimensions
+		var widthMatch  = svg.match( /^<svg[^>]*width\s*=\s*"?(\d+)"?[^>]*>/ );
+		var heightMatch = svg.match( /^<svg[^>]*height\s*=\s*"?(\d+)"?[^>]*>/ );
+
+		if ( ! widthMatch || ! heightMatch ) {
+			callback();
+			return;
+		}
+
+		var chartWidth   = parseInt( widthMatch[1], 10 );
+		var chartHeight  = parseInt( heightMatch[1], 10 );
+		var scaledWidth  = chartWidth * imageMultiplier;
+		var scaledHeight = chartHeight * imageMultiplier;
+
+		// Scale the SVG dimensions for higher resolution
+		svg = svg.replace( 'width="' + chartWidth + '"', 'width="' + scaledWidth + '"' );
+		svg = svg.replace( 'height="' + chartHeight + '"', 'height="' + scaledHeight + '"' );
+
+		// Create an offscreen canvas for rendering
+		var offscreenCanvas = document.createElement( 'canvas' );
+		offscreenCanvas.width  = scaledWidth;
+		offscreenCanvas.height = scaledHeight;
+
+		var ctx = offscreenCanvas.getContext( '2d' );
+
+		var v = canvg.Canvg.fromString( ctx, svg );
+
+		v.render().then( function() {
+			// Write the image to the hidden form field
+			var imgEl = document.getElementById( 'm-chart-img' );
+
+			if ( imgEl ) {
+				imgEl.value = offscreenCanvas.toDataURL( 'image/png' );
+			}
+
+			isGeneratingImage = false;
+			callback();
+		} );
+	}
+
+	/**
+	 * Full settings panel for Highcharts charts.
+	 *
+	 * Reuses the shared row components exposed by the parent plugin so the
+	 * Highcharts form stays in lockstep with the chartjs form's field set.
+	 */
+	function HighchartsSettings() {
+		var el = window.wp.element.createElement;
+
+		// Wrapper class scopes highcharts-only CSS overrides (e.g. hiding the
+		// per-data-point color checkbox that Highcharts doesn't consume)
+		return el( 'div', { className: 'm-chart-highcharts-form' },
+			el( window.m_chart.TypeAndThemeRow, null ),
+			el( window.m_chart.ParseAndFlagsRow, null ),
+			el( window.m_chart.AxisRows, null ),
+			el( window.m_chart.SourceRow || NoOpRow, null ),
+			el( window.m_chart.ShortcodeAndImageRow, null )
+		);
+	}
+
+	hooks.addFilter( 'm_chart.settings_component', 'm-chart-highcharts', function() {
+		return HighchartsSettings;
 	} );
-})( jQuery );
+
+	/**
+	 * Hook into m_chart.render_chart to render Highcharts instead of Chart.js
+	 *
+	 * Highcharts renders to a div, not a canvas, so we hide the canvas and render into a dedicated child div inside the wrapper
+	 *
+	 * We must NOT render directly into canvas.parentNode because Highcharts clears the container's innerHTML on both init and destroy
+	 * This would remove the React-managed canvas from the DOM
+	 *
+	 * Image generation happens in the Highcharts render callback, BEFORE
+	 * onComplete is called, so the image is ready when the form is enabled.
+	 */
+	hooks.addFilter( 'm_chart.render_chart', 'm-chart-highcharts', function( instance, canvas, chartArgs, onComplete, existingInstance ) {
+		var wrapper = canvas.parentNode || document.querySelector( '.m-chart-container' );
+
+		if ( ! wrapper ) {
+			onComplete();
+			return false;
+		}
+
+		// Hide the canvas — Highcharts will render its own elements
+		canvas.style.display = 'none';
+
+		// Destroy any existing Highcharts instance
+		if ( existingInstance && typeof existingInstance.destroy === 'function' ) {
+			existingInstance.destroy();
+		}
+
+		// Get or create a dedicated container for Highcharts rendering
+		// This keeps Highcharts' innerHTML clearing isolated from the React-managed canvas
+		var container = wrapper.querySelector( '.m-chart-highcharts-render' );
+
+		if ( ! container ) {
+			container = document.createElement( 'div' );
+			container.className = 'm-chart-highcharts-render';
+			wrapper.appendChild( container );
+		}
+
+		// Render Highcharts chart
+		// Image generation runs in the callback before onComplete fires, ensuring the image is ready when the React UI enables the form
+		var chart = Highcharts.chart( container, chartArgs, function() {
+			var chartInstance = this;
+
+			generateImage( chartInstance, function() {
+				onComplete();
+			} );
+		} );
+
+		return chart;
+	} );
+} )();
