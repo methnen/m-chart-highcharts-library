@@ -14,7 +14,7 @@ This plugin adds the Highcharts library to [M Chart](https://wordpress.org/plugi
 
 This plugin will do nothing useful on it's own and requires [M Chart](https://wordpress.org/plugins/m-chart/) to be installed.
 
-**Please download from this URL: [M Chart Highcharts Library](https://github.com/methnen/m-chart-highcharts-library/raw/master/plugin.zip)**
+**Please download from this URL: [M Chart Highcharts Library](https://github.com/methnen/m-chart-highcharts-library/raw/refs/heads/main/plugin)**
 
 **Note:** This version is requires [M Chart](https://wordpress.org/plugins/m-chart/) 2.0 or higher.
 
